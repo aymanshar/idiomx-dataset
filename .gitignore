@@ -1,0 +1,80 @@
+######################################
+# 🧠 Python
+######################################
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+
+######################################
+# 📓 Jupyter
+######################################
+.ipynb_checkpoints/
+
+######################################
+# 🖥️ OS / IDE
+######################################
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+######################################
+# 🔐 Environment / Secrets
+######################################
+.env
+.env.*
+*.key
+*.pem
+
+######################################
+# 📦 Large RAW DATA (CRITICAL)
+######################################
+data/raw/*
+!data/raw/.gitkeep
+
+######################################
+# ⚙️ Intermediate processed data
+######################################
+data/processed/*
+!data/processed/idiomx_pre_enrichment.parquet
+!data/processed/idiomx_pre_enrichment.csv
+
+######################################
+# 🧪 Enriched data (LLM outputs - large)
+######################################
+data/enriched/*
+!data/enriched/.gitkeep
+
+######################################
+# 📊 Final datasets
+######################################
+data/final/*
+!data/final/idiomx_core.csv
+!data/final/idiomx_core.parquet
+!data/final/dataset_statistics.json
+!data/final/source_distribution.csv
+
+######################################
+# 🧪 Samples (KEEP)
+######################################
+# keep all samples
+!data/samples/*
+!data/samples/*.csv
+!data/samples/*.parquet
+
+######################################
+# 📄 Logs / temp
+######################################
+*.log
+tmp/
+temp/
+
+######################################
+# ⚡ Optional: large parquet files
+######################################
+*.parquet.tmp
