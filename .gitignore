@@ -6,6 +6,7 @@ __pycache__/
 *.pyo
 *.pyd
 *.so
+*.docx
 *.egg-info/
 dist/
 build/
@@ -58,6 +59,7 @@ data/final/*
 !data/final/idiomx_core.parquet
 !data/final/dataset_statistics.json
 !data/final/source_distribution.csv
+data/final/idiomx_core.csv
 
 ######################################
 # 🧪 Samples (KEEP)

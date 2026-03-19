@@ -1,0 +1,9 @@
+{
+  "name": "IdiomX",
+  "version": "1.0.0",
+  "num_rows": 123336,
+  "num_idioms": 14986,
+  "languages": ["en", "ar"],
+  "description": "Large-scale bilingual idiom dataset with semantic annotations",
+  "sources": ["Wiktionary", "WordNet"]
+}

@@ -1,10 +1,14 @@
-# IdiomX Dataset
+# IdiomX Dataset Card
 
-## Description
-IdiomX is a curated dataset of English idioms extracted from Wiktionary and WordNet, designed for NLP research and idiomatic language understanding.
+## Overview
+IdiomX is a large-scale bilingual dataset for idiomatic expression understanding.
 
-## Dataset Size
-~12,800 idioms
+## Statistics
+- Total examples: 123,336
+- Unique idioms: 14,986
+- Languages: English, Arabic
+- Label balance: 50/50
+- Arabic coverage: 99.99%
 
 ## Languages
 - English (primary)
@@ -22,6 +26,11 @@ IdiomX is a curated dataset of English idioms extracted from Wiktionary and Word
 ## Source Data
 - Wiktionary (via Kaikki.org)
 - WordNet (Princeton)
+
+## Tasks Supported
+- Idiom detection
+- Literal vs idiomatic classification
+- Cross-lingual idiom understanding
 
 ## License
 - CC BY-SA 4.0 (Wiktionary-derived)

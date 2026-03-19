@@ -1,35 +1,13 @@
 {
-  "dataset_name": "IdiomX",
-  "version": "v1.0.0",
-  "total_rows": 12853,
-  "total_columns": 9,
-  "unique_idioms_canonical": null,
-  "source_distribution": {
-    "kaikki_wiktionary": 12838,
-    "wordnet": 15
-  },
-  "label_distribution": {},
-  "generated_example_distribution": {},
-  "missing_values": {
-    "idiom_id": 0,
-    "example": 3962,
-    "idiom_canonical_meaning": 0,
-    "source": 0,
-    "record_origin": 0,
-    "license_source": 0,
-    "example_language": 0,
-    "meaning_language": 0,
-    "meaning_arabic_language": 0
-  },
-  "columns": [
-    "idiom_id",
-    "example",
-    "idiom_canonical_meaning",
-    "source",
-    "record_origin",
-    "license_source",
-    "example_language",
-    "meaning_language",
-    "meaning_arabic_language"
-  ]
+  "original_rows": 128784,
+  "filtered_rows": 123336,
+  "removed_rows": 5448,
+  "allowed_sources": [
+    "kaikki_wiktionary",
+    "wordnet"
+  ],
+  "source_distribution_after": {
+    "kaikki_wiktionary": 123216,
+    "wordnet": 120
+  }
 }

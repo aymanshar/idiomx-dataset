@@ -1,141 +1,165 @@
-# IdiomX Dataset 🧠
+---
+pretty_name: IdiomX
+language:
+- en
+- ar
+license: other
+task_categories:
+- text-classification
+- translation
+- text-generation
+tags:
+- idioms
+- bilingual
+- english
+- arabic
+- semantic-understanding
+- figurative-language
+size_categories:
+- 100K<n<1M
+---
 
-**IdiomX** is a large-scale, high-quality dataset for English idiom understanding, translation, and contextual modeling.
+# IdiomX  
+### A Large-Scale Bilingual Dataset for Idiomatic Expression Understanding
 
-It is designed for research in:
-- Idiom detection
-- Context → idiom mapping
-- Semantic understanding
-- Cross-lingual idiom translation (English ↔ Arabic)
+**Author:** Ayman Ali Sharara  
+**Affiliation:** Independent Researcher, UAE  
+**Email:** aymanshar@gmail.com  
 
 ---
 
-## 📊 Dataset Overview
+## 📌 Overview
 
-| Property | Value |
-|--------|------|
-| Total Idioms | ~12,800 |
-| Sources | Wiktionary (Kaikki), WordNet |
-| Language | English |
-| Format | CSV, Parquet |
-| Enrichment | Optional (LLM-based) |
+**IdiomX** is a large-scale, high-quality bilingual dataset designed for **idiomatic expression understanding**, including detection, interpretation, and cross-lingual analysis.
+
+The dataset contains **over 123,000 contextualized examples** derived from approximately **15,000 English idioms**, enriched with semantic annotations and **English–Arabic translations**.
+
+To the best of our knowledge, **IdiomX is the largest publicly available bilingual idiom dataset** with contextualized examples and semantic consistency validation.
 
 ---
 
-## 🧱 Dataset Structure
+## 📊 Dataset Statistics
 
-	data/
-	├── raw/ # (ignored in git)
-	├── processed/ # intermediate
-	├── enriched/ # LLM outputs
-	├── final/ # final datasets
-	└── samples/ # small public samples
-	
-
----
-
-## 📌 Core Dataset Columns
-
-| Column | Description |
-|------|------------|
-| idiom_id | Unique identifier |
-| idiom_canonical | Base idiom |
-| idiom_surface | Variant form |
-| example | Example sentence |
-| idiom_canonical_meaning | Meaning of idiom |
-| source | Data source |
-| pos | Part of speech |
-| tags | Linguistic tags |
-| idiom_confidence_score | Confidence score |
-| record_origin | source / LLM |
-| license_source | License origin |
+| Metric | Value |
+|------|------|
+| Total examples | 123,336 |
+| Unique idioms | 14,986 |
+| Avg examples per idiom | 8.2 |
+| Arabic coverage | 99.99% |
+| Label balance | 50/50 |
 
 ---
 
-## 📚 Data Sources
+## 🌍 Languages
 
-### Wiktionary (via Kaikki.org)
-- License: CC BY-SA 4.0
-
-### WordNet
-- License: Princeton WordNet License
+- English 🇬🇧  
+- Arabic 🇸🇦  
 
 ---
 
-## ⚖️ Licensing
+## 🧠 Features
 
-This dataset includes material from:
+Each record includes:
 
-- Wiktionary (CC BY-SA 4.0)
-- WordNet (Princeton License)
-
-See:
-- `DATASET_LICENSE.md`
-- `THIRD_PARTY_NOTICES.md`
-
----
-
-## 🔁 Reproducibility
-
-Full pipeline included:
-
-	scripts/
-	notebooks/
-	
-
-Steps:
-1. Extract idioms from Wiktionary
-2. Clean + normalize
-3. Merge WordNet
-4. Build dataset
-5. (Optional) LLM enrichment
+- `idiom_canonical`
+- `idiom_surface`
+- `idiom_in_example`
+- `idiom_in_example_meaning_en`
+- `idiom_in_example_meaning_arabic`
+- `idiom_canonical_meaning`
+- `idiom_canonical_meaning_arabic`
+- `example_usage_label` (idiomatic / literal)
+- `semantic_consistency`
+- Additional linguistic features
 
 ---
 
-## 📦 Available Files
+## 🔍 Data Sources
 
-### Final dataset
-- `data/final/idiomx_core.csv`
-- `data/final/idiomx_core.parquet`
+This dataset is constructed from **high-quality lexical resources only**:
 
-### Sample
-- `data/samples/idiomx_sample_1000.csv`
+- **Wiktionary**
+- **WordNet**
+
+All other sources were excluded to ensure consistency and reliability.
+
+---
+
+## ⚙️ Dataset Construction
+
+The dataset is built through a multi-stage pipeline:
+
+1. **Data Collection**
+   - Extract idioms from Wiktionary and WordNet
+
+2. **Preprocessing**
+   - Cleaning, normalization, deduplication
+
+3. **LLM Enrichment**
+   - Generate contextual examples
+   - Generate English and Arabic meanings
+   - Generate translations
+
+4. **Validation**
+   - Missing value analysis
+   - Label consistency checks (>99.98%)
+   - Semantic consistency scoring
+   - Surface-form validation
+
+---
+
+## 📈 Validation Highlights
+
+- Label consistency: **>99.98%**
+- Arabic coverage: **~100%**
+- Mean semantic consistency score: **~0.59**
+
+---
+
+## 📂 Files
+
+- `idiomx_core.parquet` → main dataset (recommended)
+- `idiomx_core.csv` → CSV version
+- `dataset_statistics.json` → dataset summary statistics
 
 ---
 
 ## 🚀 Use Cases
 
-- NLP research
-- Idiom detection models
-- Transformer training (T5, BERT)
-- Cross-lingual translation
-- Semantic retrieval
+IdiomX supports a wide range of NLP tasks:
+
+- Idiom detection (idiomatic vs literal classification)
+- Idiom interpretation and meaning retrieval
+- Context-to-idiom generation
+- Cross-lingual idiom translation
+- Multilingual semantic understanding
 
 ---
 
-## 📖 Citation
+## ⚠️ Limitations
 
-If you use this dataset:
+- Some examples are generated using LLMs
+- Minor annotation noise may exist (<0.01%)
+- Idiomatic interpretation may vary across contexts
 
-@dataset{idiomx2026,
-title={IdiomX: Neural Dataset for Idiom Understanding},
-author={Ayman},
-year={2026}
+---
+
+## 📄 Paper
+
+The full dataset paper is available here:
+
+👉 `docs/IdiomX_Dataset_Paper_v1.pdf`
+
+---
+
+## 📚 Citation
+
+If you use this dataset, please cite:
+
+```bibtex
+@article{sharara2026idiomx,
+  title={IdiomX: A Large-Scale Bilingual Dataset for Idiomatic Expression Understanding},
+  author={Sharara, Ayman Ali},
+  year={2026},
+  note={Dataset and paper available on GitHub and HuggingFace}
 }
-
-
----
-
-## 👨‍💻 Author
-
-Developed by Ayman Sharara  
-UAE 🇦🇪
-
----
-
-## ⭐ Contributions
-
-Pull requests are welcome for:
-- Additional sources
-- Better filtering
-- Multilingual extensions
