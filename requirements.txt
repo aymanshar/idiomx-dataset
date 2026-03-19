@@ -1,0 +1,7 @@
+"numpy<2" 
+pandas 
+openai 
+python-dotenv 
+tqdm
+re
+pathlib

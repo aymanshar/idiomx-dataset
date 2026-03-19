@@ -3,10 +3,30 @@ import json
 import pandas as pd
 
 BASE_DIR = Path(__file__).resolve().parents[1]
-INPUT_CSV = BASE_DIR / "data" / "raw" / "idiomx_dataset_v1.csv"
-OUTPUT_JSONL = BASE_DIR / "data" / "batches" / "idiomx_batch_v2.jsonl"
+
+# Default full-data paths
+DEFAULT_FULL_INPUT_FILE = BASE_DIR / "data" / "processed" / "idiomx_pre_enrichment.parquet"
+DEFAULT_FULL_OUTPUT_JSONL = BASE_DIR / "data" / "batches" / "idiomx_batch_v2.jsonl"
+
+# Default sample-data paths
+DEFAULT_SAMPLE_DIR = BASE_DIR / "data" / "sample"
+DEFAULT_SAMPLE_INPUT_FILE = DEFAULT_SAMPLE_DIR / "idiomx_pre_enrichment_sample.parquet"
+DEFAULT_SAMPLE_OUTPUT_JSONL = DEFAULT_SAMPLE_DIR / "idiomx_batch_v2_sample.jsonl"
 
 MODEL_NAME = "gpt-4.1-mini"
+
+"""
+Prepare batch requests for IdiomX enrichment.
+
+Safe to run offline.
+This script does NOT call the API.
+It only reads the pre-enrichment dataset and writes JSONL batch requests.
+
+Supports:
+- full dataset mode
+- sample dataset mode
+- creating a small sample from the full dataset
+"""
 
 def build_prompt(idiom: str, meaning_en: str, example: str) -> str:
     return f"""
@@ -158,8 +178,78 @@ def get_response_schema():
         }
     }
 
-def prepare_batch_requests(input_csv: Path = INPUT_CSV, output_jsonl: Path = OUTPUT_JSONL):
-    df = pd.read_csv(input_csv)
+def create_sample_dataset(
+    full_input_file: Path = DEFAULT_FULL_INPUT_FILE,
+    sample_output_file: Path = DEFAULT_SAMPLE_INPUT_FILE,
+    n_rows: int = 5,
+    method: str = "head",
+    random_state: int = 42,
+):
+    """
+    Create a small sample dataset from the full pre-enrichment dataset.
+
+    Parameters
+    ----------
+    full_input_file : Path
+        Path to the full pre-enrichment parquet file.
+    sample_output_file : Path
+        Path where the sample parquet file will be saved.
+    n_rows : int
+        Number of rows in the sample.
+    method : str
+        "head" or "random".
+    random_state : int
+        Random seed used if method == "random".
+    """
+    if not full_input_file.exists():
+        raise FileNotFoundError(f"Full input file not found: {full_input_file}")
+
+    df = pd.read_parquet(full_input_file)
+
+    if len(df) == 0:
+        raise ValueError("Full dataset is empty; cannot create sample.")
+
+    if method == "random":
+        n_rows = min(n_rows, len(df))
+        df_sample = df.sample(n=n_rows, random_state=random_state).copy()
+    else:
+        df_sample = df.head(n_rows).copy()
+
+    sample_output_file.parent.mkdir(parents=True, exist_ok=True)
+    df_sample.to_parquet(sample_output_file, index=False)
+
+    print(f"Sample dataset created: {sample_output_file}")
+    print(f"Sample shape: {df_sample.shape}")
+    return sample_output_file
+
+def get_mode_paths(use_sample: bool = False):
+    """
+    Return input/output paths based on mode.
+    """
+    if use_sample:
+        return DEFAULT_SAMPLE_INPUT_FILE, DEFAULT_SAMPLE_OUTPUT_JSONL
+    return DEFAULT_FULL_INPUT_FILE, DEFAULT_FULL_OUTPUT_JSONL
+
+def prepare_batch_requests(
+    input_file: Path = None,
+    output_jsonl: Path = None,
+    use_sample: bool = False,
+):
+    """
+    Prepare JSONL batch requests from the chosen input dataset.
+    """
+    if input_file is None or output_jsonl is None:
+        default_input, default_output = get_mode_paths(use_sample=use_sample)
+        input_file = input_file or default_input
+        output_jsonl = output_jsonl or default_output
+
+    if not input_file.exists():
+        raise FileNotFoundError(f"Input dataset not found: {input_file}")
+
+    df = pd.read_parquet(input_file)
+
+    if len(df) == 0:
+        raise ValueError(f"Input dataset is empty: {input_file}")
 
     output_jsonl.parent.mkdir(parents=True, exist_ok=True)
 
@@ -167,14 +257,21 @@ def prepare_batch_requests(input_csv: Path = INPUT_CSV, output_jsonl: Path = OUT
 
     with open(output_jsonl, "w", encoding="utf-8") as f:
         for idx, row in df.iterrows():
-            idiom = str(row.get("idiom", "") if pd.notna(row.get("idiom", "")) else "")
-            meaning_en = str(row.get("meaning_en", "") if pd.notna(row.get("meaning_en", "")) else "")
+            idiom = str(row.get("idiom_canonical", "") if pd.notna(row.get("idiom_canonical", "")) else "")
+            meaning_en = str(row.get("idiom_canonical_meaning", "") if pd.notna(row.get("idiom_canonical_meaning", "")) else "")
             example = str(row.get("example", "") if pd.notna(row.get("example", "")) else "")
+
+            # Prefer stable idiom_id if available
+            row_id = row.get("idiom_id", None)
+            if pd.notna(row_id):
+                custom_id = str(row_id)
+            else:
+                custom_id = f"idiomx_v2_{idx}"
 
             prompt = build_prompt(idiom, meaning_en, example)
 
             request = {
-                "custom_id": f"idiomx_v2_{idx}",
+                "custom_id": custom_id,
                 "method": "POST",
                 "url": "/v1/responses",
                 "body": {
@@ -189,7 +286,10 @@ def prepare_batch_requests(input_csv: Path = INPUT_CSV, output_jsonl: Path = OUT
             f.write(json.dumps(request, ensure_ascii=False) + "\n")
 
     print(f"Saved batch file to: {output_jsonl}")
+    print(f"Input dataset: {input_file}")
     print(f"Total requests: {len(df)}")
+    return output_jsonl
 
 if __name__ == "__main__":
+    # Default behavior: full dataset mode
     prepare_batch_requests()
