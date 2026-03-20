@@ -36,6 +36,14 @@ The dataset contains **over 123,000 contextualized examples** derived from appro
 
 To the best of our knowledge, **IdiomX is the largest publicly available bilingual idiom dataset** with contextualized examples and semantic consistency validation.
 
+--- 
+
+## Note on Example Fields
+
+The `example` column preserves examples as collected from the original source data and may contain missing values.
+
+For modeling and analysis, the recommended contextual field is `idiom_in_example`, which provides the enriched example text used throughout the IdiomX pipeline.
+
 ---
 
 ## 📊 Dataset Statistics
