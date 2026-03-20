@@ -164,7 +164,7 @@ IdiomX supports a wide range of NLP tasks:
 - 🤗 HuggingFace: https://huggingface.co/datasets/aymansharara/IdiomX
 - 💻 GitHub: https://github.com/aymanshar/idiomx-dataset
 - Kaggle: https://www.kaggle.com/datasets/aymansharara/idiomx
-
+- Zenodo: https://doi.org/10.5281/zenodo.19137833
 ---
 
 ## 📄 Paper
