@@ -33,6 +33,7 @@ IdiomX is a large-scale bilingual dataset for idiomatic expression understanding
 - Cross-lingual idiom understanding
 
 ## License
+- MT. License
 - CC BY-SA 4.0 (Wiktionary-derived)
 - WordNet License
 

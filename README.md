@@ -80,11 +80,18 @@ This dataset is constructed from **high-quality lexical resources only**:
 
 - **Wiktionary**
 - **WordNet**
+- **Enrichment by Generated Example and more informative fields using GPT LLM**
 
 All other sources were excluded to ensure consistency and reliability.
 
 ---
 
+## License
+- MIT. License
+- CC BY-SA 4.0 (Wiktionary-derived)
+- WordNet License
+
+---
 ## ⚙️ Dataset Construction
 
 The dataset is built through a multi-stage pipeline:
@@ -141,6 +148,14 @@ IdiomX supports a wide range of NLP tasks:
 - Some examples are generated using LLMs
 - Minor annotation noise may exist (<0.01%)
 - Idiomatic interpretation may vary across contexts
+
+---
+
+## 🔗 Links
+
+- 🤗 HuggingFace: https://huggingface.co/datasets/aymansharara/IdiomX
+- 💻 GitHub: https://github.com/aymanshar/idiomx-dataset
+- Kaggle: https://www.kaggle.com/datasets/aymansharara/idiomx
 
 ---
 
