@@ -33,7 +33,7 @@ Supervised by Prof. Hanna Abi Akl
 
 ---
 
-## 📌 Overview
+## Overview
 
 **IdiomX** is a large-scale, high-quality bilingual dataset designed for **idiomatic expression understanding**, including detection, interpretation, and cross-lingual analysis.
 
@@ -51,7 +51,7 @@ For modeling and analysis, the recommended contextual field is `idiom_in_example
 
 ---
 
-## 📊 Dataset Statistics
+## Dataset Statistics
 
 | Metric | Value |
 |------|------|
@@ -63,7 +63,7 @@ For modeling and analysis, the recommended contextual field is `idiom_in_example
 
 ---
 
-## 🧠 IdiomX Pipeline
+## IdiomX Pipeline
 
 ```mermaid
 flowchart LR
@@ -86,14 +86,14 @@ flowchart LR
 ```
 ---
 
-## 🌍 Languages
+## Languages
 
-- English 🇬🇧  
-- Arabic 🇸🇦  
+- English en  
+- Arabic ar  
 
 ---
 
-## 🧠 Features
+## Features
 
 Each record includes:
 
@@ -110,7 +110,7 @@ Each record includes:
 
 ---
 
-## 🔍 Data Sources
+## Data Sources
 
 This dataset is constructed from **high-quality lexical resources only**:
 
@@ -128,7 +128,7 @@ All other sources were excluded to ensure consistency and reliability.
 - WordNet License
 
 ---
-## ⚙️ Dataset Construction
+## Dataset Construction
 
 The dataset is built through a multi-stage pipeline:
 
@@ -151,15 +151,7 @@ The dataset is built through a multi-stage pipeline:
 
 ---
 
-## 📈 Validation Highlights
-
-- Label consistency: **>99.98%**
-- Arabic coverage: **~100%**
-- Mean semantic consistency score: **~0.59**
-
----
-
-## 📂 Files
+## Files
 
 - `idiomx_core.parquet` → main dataset (recommended)
 - `idiomx_core.csv` → CSV version
@@ -167,7 +159,7 @@ The dataset is built through a multi-stage pipeline:
 
 ---
 
-## 🚀 Use Cases
+## Use Cases
 
 IdiomX supports a wide range of NLP tasks:
 
@@ -179,7 +171,7 @@ IdiomX supports a wide range of NLP tasks:
 
 ---
 
-## ⚠️ Limitations
+## Limitations
 
 - Some examples are generated using LLMs
 - Minor annotation noise may exist (<0.01%)
@@ -187,27 +179,29 @@ IdiomX supports a wide range of NLP tasks:
 
 ---
 
-## 🔗 Links
+## Links
 
-- 🤗 HuggingFace: https://huggingface.co/datasets/aymansharara/IdiomX
-- 💻 GitHub: https://github.com/aymanshar/idiomx-dataset
+- HuggingFace: https://huggingface.co/datasets/aymansharara/IdiomX
+- GitHub: https://github.com/aymanshar/idiomx-dataset
 - Kaggle: https://www.kaggle.com/datasets/aymansharara/idiomx
 - Zenodo: https://doi.org/10.5281/zenodo.19137833
+
 ---
 
-## 📄 Paper
+## Paper
 
 The full dataset paper is available here:
 
-👉 `docs/IdiomX_Dataset_Paper_v1.pdf`
+ `docs/IdiomX_Dataset_Paper_v1.pdf`
 
 ---
 
-## 📚 Citation
+## Citation
 
 If you use this dataset, please cite:
 
-Sharara, Ayman Ali (2026).  
+Sharara, Ayman Ali (2026). 
+ 
 **IdiomX: A Large-Scale Bilingual Dataset for Idiomatic Expression Understanding**.  
 Zenodo. https://doi.org/10.5281/zenodo.19137833
 
