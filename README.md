@@ -3,6 +3,7 @@
 ## IdiomX  
 **A Large-Scale Bilingual Dataset for Idiomatic Expression Understanding**
 
+
 **Author:** Ayman Ali Sharara  
 
 **Affiliation:**  
@@ -18,6 +19,14 @@ Supervised by Prof. Hanna Abi Akl
 - Academic: ayman.sharara@edu.dsti.institute  
 - Personal: aymanshar@gmail.com  
 
+[![Hugging Face](https://img.shields.io/badge/HuggingFace-Dataset-yellow?logo=huggingface)](https://huggingface.co/datasets/aymansharara/IdiomX)
+[![Kaggle](https://img.shields.io/badge/Kaggle-Dataset-blue?logo=kaggle)](https://www.kaggle.com/datasets/aymansharara/idiomx)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.19137833-blue)](https://doi.org/10.5281/zenodo.19137833)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Dataset Size](https://img.shields.io/badge/Examples-123K+-informational)]()
+[![Languages](https://img.shields.io/badge/Languages-EN%20%7C%20AR-blue)]()
+[![Tasks](https://img.shields.io/badge/Tasks-NLP%20%7C%20Translation%20%7C%20Classification-purple)]()
+[![Status](https://img.shields.io/badge/Status-Active%20Research-orange)]()
 ---
 
 pretty_name: IdiomX
