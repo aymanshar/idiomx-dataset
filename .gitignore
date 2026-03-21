@@ -68,15 +68,15 @@ data/final/idiomx_core.csv
 !data/samples/*
 !data/samples/*.csv
 !data/samples/*.parquet
-
+idiomx_release/
+idiomx_kaggle/
 ######################################
 # 📄 Logs / temp
 ######################################
 *.log
 tmp/
 temp/
-idiomx_release/
-idiomx_kaggle/
+
 
 ######################################
 # ⚡ Optional: large parquet files
