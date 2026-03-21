@@ -3,6 +3,9 @@
 ## Overview
 IdiomX is a large-scale bilingual dataset for idiomatic expression understanding.
 
+## Project Context
+This dataset was developed as part of the MSc Data Science & Machine Learning program at DSTI School of Engineering, under the Deep Learning with Python course, supervised by Prof. Hanna Abi Akl.
+
 ## Statistics
 - Total examples: 123,336
 - Unique idioms: 14,986

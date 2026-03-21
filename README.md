@@ -1,4 +1,25 @@
+# IdiomX: English–Arabic Idiom Understanding Dataset
+
+## IdiomX  
+**A Large-Scale Bilingual Dataset for Idiomatic Expression Understanding**
+
+**Author:** Ayman Ali Sharara  
+
+**Affiliation:**  
+MSc Data Science & Machine Learning (SPOC S21)  
+DSTI School of Engineering  
+https://dsti.school/
+
+**Project Context:**  
+Deep Learning with Python  
+Supervised by Prof. Hanna Abi Akl  
+
+**Contact:**  
+- Academic: ayman.sharara@edu.dsti.institute  
+- Personal: aymanshar@gmail.com  
+
 ---
+
 pretty_name: IdiomX
 language:
 - en
@@ -17,14 +38,6 @@ tags:
 - figurative-language
 size_categories:
 - 100K<n<1M
----
-
-# IdiomX  
-### A Large-Scale Bilingual Dataset for Idiomatic Expression Understanding
-
-**Author:** Ayman Ali Sharara  
-**Affiliation:** Independent Researcher, UAE  
-**Email:** aymanshar@gmail.com  
 
 ---
 
@@ -178,6 +191,10 @@ The full dataset paper is available here:
 ## 📚 Citation
 
 If you use this dataset, please cite:
+
+Sharara, Ayman Ali (2026).  
+**IdiomX: A Large-Scale Bilingual Dataset for Idiomatic Expression Understanding**.  
+Zenodo. https://doi.org/10.5281/zenodo.19137833
 
 ```bibtex
 @article{sharara2026idiomx,
