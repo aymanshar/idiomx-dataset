@@ -7,6 +7,8 @@ __pycache__/
 *.pyd
 *.so
 *.docx
+.gitignore
+manual_run.txt
 *.egg-info/
 dist/
 build/
@@ -60,6 +62,12 @@ data/final/*
 !data/final/dataset_statistics.json
 !data/final/source_distribution.csv
 data/final/idiomx_core.csv
+data/batches/
+data/enriched/
+data/processed/
+data/raw/
+data/results/
+data/sample/
 
 ######################################
 # 🧪 Samples (KEEP)
