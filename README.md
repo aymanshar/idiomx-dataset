@@ -33,27 +33,6 @@ Supervised by Prof. Hanna Abi Akl
 
 ---
 
-pretty_name: IdiomX
-language:
-- en
-- ar
-license: other
-task_categories:
-- text-classification
-- translation
-- text-generation
-tags:
-- idioms
-- bilingual
-- english
-- arabic
-- semantic-understanding
-- figurative-language
-size_categories:
-- 100K<n<1M
-
----
-
 ## 📌 Overview
 
 **IdiomX** is a large-scale, high-quality bilingual dataset designed for **idiomatic expression understanding**, including detection, interpretation, and cross-lingual analysis.
