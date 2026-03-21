@@ -84,6 +84,29 @@ For modeling and analysis, the recommended contextual field is `idiom_in_example
 
 ---
 
+## 🧠 IdiomX Pipeline
+
+```mermaid
+flowchart LR
+    A[Wiktionary + WordNet] --> B[Data Extraction]
+    B --> C[Cleaning & Normalization]
+    C --> D[Deduplication]
+
+    D --> E[LLM Enrichment]
+    E --> E1[Generate Examples]
+    E --> E2[English Meanings]
+    E --> E3[Arabic Translation]
+
+    E --> F[Validation]
+    F --> F1[Semantic Consistency]
+    F --> F2[Label Validation]
+
+    F --> G[Final Dataset]
+    G --> H[Parquet / CSV Release]
+    H --> I[HuggingFace / Kaggle / GitHub]
+```
+---
+
 ## 🌍 Languages
 
 - English 🇬🇧  
@@ -216,3 +239,4 @@ Zenodo. https://doi.org/10.5281/zenodo.19137833
   year={2026},
   note={Dataset and paper available on GitHub and HuggingFace}
 }
+```
