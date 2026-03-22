@@ -1,15 +1,28 @@
+"""
+IdiomX Dataset Pipeline
+
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
+Clean the strictly filtered Wiktionary idiom dataset.
+This script refines the strict Kaikki idiom subset by removing lexical noise,
+filtering low-quality meanings and tags, ranking rows by idiom evidence,
+and deduplicating the final cleaned idiom list.
+
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+
 import pandas as pd
 from pathlib import Path
 import sys
 import re
-
-"""
-Clean the strictly filtered Wiktionary idiom dataset.
-
-This script refines the strict Kaikki idiom subset by removing lexical noise,
-filtering low-quality meanings and tags, ranking rows by idiom evidence,
-and deduplicating the final cleaned idiom list.
-"""
 
 # Project directories
 BASE_DIR = Path("..")

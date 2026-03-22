@@ -1,18 +1,32 @@
-from pathlib import Path
-import pandas as pd
-
 """
-Merge the Stage 4 idiom dataset with the normalized LIdioms dataset.
+IdiomX Dataset Pipeline
 
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
+Merge the Stage 4 idiom dataset with the normalized LIdioms dataset.
 This script expands the idiom inventory by adding semantically structured
 LIdioms entries to the previously merged dataset. The result is the Stage 5
 dataset, which is later refined by global idiom filtering.
-"""
 
-# NOTE:
+Notes:
 # LIdioms contributes a small but semantically structured set of idiomatic expressions.
 # Unlike WordNet, this source is designed specifically around idiomatic knowledge,
 # which improves source diversity in the merged dataset.
+
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+
+from pathlib import Path
+import pandas as pd
+
 
 BASE_DIR = Path("..")
 DATA_PROCESS_DIR = BASE_DIR / "data" / "processed"

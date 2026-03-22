@@ -1,9 +1,12 @@
-from pathlib import Path
-import re
-import argparse
-import pandas as pd
-
 """
+IdiomX Dataset Pipeline
+
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
 Validate the enriched IdiomX dataset.
 
 This script performs rule-based validation to ensure data quality,
@@ -16,12 +19,23 @@ Supports:
 - notebook execution with explicit paths
 - command-line execution
 - full mode and sample mode
-"""
 
-# NOTE:
+Notes:
 # This stage introduces a rule-based validation layer to ensure that
 # LLM-generated outputs meet structural and semantic constraints,
 # improving dataset reliability for downstream modeling tasks.
+
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+from pathlib import Path
+import re
+import argparse
+import pandas as pd
+
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 

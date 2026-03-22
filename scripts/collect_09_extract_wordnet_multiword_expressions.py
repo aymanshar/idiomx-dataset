@@ -1,14 +1,27 @@
+"""
+IdiomX Dataset Pipeline
+
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+# WordNet does not explicitly label idioms.
+# This extraction captures multi-word expressions, which may include  collocations, compounds, and idiomatic phrases.
+# Therefore, this source is labeled as medium-confidence.
+
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+
 from pathlib import Path
 import pandas as pd
 import nltk
 from nltk.corpus import wordnet as wn
 
-"""
-# NOTE:
-# WordNet does not explicitly label idioms.
-# This extraction captures multi-word expressions, which may include  collocations, compounds, and idiomatic phrases.
-# Therefore, this source is labeled as medium-confidence.
-"""
 
 BASE_DIR = Path("..")
 DATA_PROCESS_DIR = BASE_DIR / "data" / "processed"

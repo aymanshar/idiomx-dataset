@@ -1,24 +1,38 @@
-import pandas as pd
-from pathlib import Path
-import sys
-import re
-
 """
-Strict filtering stage for Wiktionary idiom candidates.
+IdiomX Dataset Pipeline
 
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
+Strict filtering stage for Wiktionary idiom candidates.
 This script takes the broad Kaikki extraction output and applies
 higher-precision filtering rules to retain more reliable idiomatic expressions.
 
-Main operations:
+Outputs:
+- a stricter idiom subset used in later cleaning, normalization, and merging steps
+
+Notes:
+- Main operations:
 1. structural phrase filtering
 2. part-of-speech filtering
 3. lexical meaning filtering
 4. idiom signal detection
 5. deduplication
 
-Output:
-- a stricter idiom subset used in later cleaning, normalization, and merging steps
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
 """
+
+import pandas as pd
+from pathlib import Path
+import sys
+import re
 
 # Project directories
 BASE_DIR = Path("..")

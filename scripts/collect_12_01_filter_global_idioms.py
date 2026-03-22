@@ -1,23 +1,36 @@
-from pathlib import Path
-import pandas as pd
-import re
-
 """
-Global idiom filtering and dataset refinement stage.
+IdiomX Dataset Pipeline
 
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
+Global idiom filtering and dataset refinement stage.
 This script applies heuristic rules and confidence modeling to transform
 the merged idiom dataset into two final forms:
 - Broad dataset (higher recall, more coverage)
 - High-precision dataset (clean, reliable idioms)
-
 This stage is critical for balancing dataset quality and coverage.
-"""
 
-# NOTE:
+Notes:
 # This stage implements a heuristic-based confidence modeling strategy.
 # It separates idioms into broad and high-precision subsets, enabling
 # different downstream use cases such as recall-oriented retrieval
 # and precision-focused model training.
+
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+
+from pathlib import Path
+import pandas as pd
+import re
+
 
 BASE_DIR = Path("..")
 DATA_PROCESS_DIR = BASE_DIR / "data" / "processed"
@@ -27,10 +40,8 @@ INPUT_FILE = DATA_PROCESS_DIR / "idioms_dataset_stage5.csv"
 OUTPUT_BROAD = DATA_PROCESS_DIR / "idioms_dataset_stage5_broad.csv"
 OUTPUT_HIGH = DATA_PROCESS_DIR / "idioms_dataset_stage5_high_precision.csv"
 
-# ============================================================
 # Heuristic hints used to keep likely idiomatic expressions
 # and remove overly literal / academic / technical phrases.
-# ============================================================
 
 IDIOM_TAG_HINTS = {
     "idiomatic",

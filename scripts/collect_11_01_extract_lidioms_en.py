@@ -1,3 +1,30 @@
+"""
+IdiomX Dataset Pipeline
+
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
+Extract English idiom-like expressions from the LIdioms semantic dataset.
+This script downloads the dataset if needed, parses RDF files, extracts
+idiom labels, meanings, and examples, and converts them into the standardized
+IdiomX source schema for later merging.
+
+
+Notes:
+# LIdioms is a linked-data idiom resource represented in RDF format.
+# Unlike dictionary-style sources, this dataset contributes semantically
+# structured idiomatic expressions and improves source diversity.
+
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+
 from pathlib import Path
 import pandas as pd
 from rdflib import Graph, Literal
@@ -6,18 +33,6 @@ import requests
 import zipfile
 import io
 
-"""
-Extract English idiom-like expressions from the LIdioms semantic dataset.
-
-This script downloads the dataset if needed, parses RDF files, extracts
-idiom labels, meanings, and examples, and converts them into the standardized
-IdiomX source schema for later merging.
-"""
-
-# NOTE:
-# LIdioms is a linked-data idiom resource represented in RDF format.
-# Unlike dictionary-style sources, this dataset contributes semantically
-# structured idiomatic expressions and improves source diversity.
 
 # Official ZIP archive used to download the LIdioms dataset
 LIDIOMS_REPO_ZIP = "https://github.com/dice-group/LIdioms/archive/refs/heads/master.zip"

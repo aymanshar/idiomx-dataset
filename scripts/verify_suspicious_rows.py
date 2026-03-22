@@ -1,12 +1,12 @@
-from pathlib import Path
-import json
-import argparse
-import pandas as pd
-from tqdm import tqdm
-
-from config.api_config import client
-
 """
+IdiomX Dataset Pipeline
+
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
 Verify suspicious IdiomX rows using the API.
 
 LLM-based verification and correction stage for IdiomX dataset.
@@ -25,24 +25,33 @@ Supports:
 - notebook execution with explicit paths
 - command-line execution
 - full mode and sample mode
-"""
 
-# NOTE:
+Notes:
 # This stage introduces a human-in-the-loop style refinement using LLMs,
 # where only uncertain or problematic samples are re-evaluated,
 # significantly improving dataset quality while controlling cost.
 
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+from pathlib import Path
+import json
+import argparse
+import pandas as pd
+from tqdm import tqdm
+from config.api_config import client
+
+
 BASE_DIR = Path(__file__).resolve().parents[1]
 
-# ==============================
 # Full-mode defaults
-# ==============================
 DEFAULT_FULL_INPUT_CSV = BASE_DIR / "data" / "enriched" / "idiomx_enriched_full_validated.csv"
 DEFAULT_FULL_OUTPUT_CSV = BASE_DIR / "data" / "enriched" / "idiomx_enriched_full_final.csv"
 
-# ==============================
 # Sample-mode defaults
-# ==============================
 DEFAULT_SAMPLE_INPUT_CSV = BASE_DIR / "data" / "sample" / "idiomx_enriched_sample_validated.csv"
 DEFAULT_SAMPLE_OUTPUT_CSV = BASE_DIR / "data" / "sample" / "idiomx_enriched_sample_final.csv"
 

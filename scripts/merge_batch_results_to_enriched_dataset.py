@@ -1,23 +1,35 @@
-from pathlib import Path
-import json
-import pandas as pd
-from json_repair import repair_json as repair_llm_json
-
 """
+IdiomX Dataset Pipeline
+
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
 Merge LLM batch results into the final enriched IdiomX dataset.
 
 This script aligns raw batch outputs with the original pre-enrichment dataset,
 repairs malformed JSON if needed, expands generated examples into structured rows,
 and exports the enriched dataset for downstream analysis and modeling.
-"""
 
-# NOTE:
+Notes:
 # This stage transforms schema-constrained LLM outputs into the final row-level
 # enrichment dataset, enabling direct use in bilingual idiom modeling,
 # retrieval tasks, and downstream analysis.
 
-# paths
+License:
+MIT License (see LICENSE file)
 
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+from pathlib import Path
+import json
+import pandas as pd
+from json_repair import repair_json as repair_llm_json
+
+# paths
 BASE_DIR = Path(__file__).resolve().parents[1]
 DEFAULT_RAW_FILE = BASE_DIR / "data" / "processed" / "idiomx_pre_enrichment.parquet"
 DEFAULT_RESULTS_JSONL = BASE_DIR / "data" / "results" / "idiomx_results.jsonl"

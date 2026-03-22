@@ -1,14 +1,26 @@
+"""
+IdiomX Dataset Pipeline
+
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
+Normalize the high-precision Kaikki idiom dataset.
+This script converts the high-precision Wiktionary idiom subset into the
+standardized source schema used across all IdiomX lexical resources.
+
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
 import pandas as pd
 from pathlib import Path
 import sys
 import re
-
-"""
-Normalize the high-precision Kaikki idiom dataset.
-
-This script converts the high-precision Wiktionary idiom subset into the
-standardized source schema used across all IdiomX lexical resources.
-"""
 
 # Project directories
 BASE_DIR = Path("..")

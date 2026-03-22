@@ -1,3 +1,30 @@
+"""
+IdiomX Dataset Pipeline
+
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
+Prepare batch requests for IdiomX enrichment.
+
+Safe to run offline.
+This script does NOT call the API.
+It only reads the pre-enrichment dataset and writes JSONL batch requests.
+
+Supports:
+- full dataset mode
+- sample dataset mode
+- creating a small sample from the full dataset
+
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+
 from pathlib import Path
 import json
 import pandas as pd
@@ -14,19 +41,6 @@ DEFAULT_SAMPLE_INPUT_FILE = DEFAULT_SAMPLE_DIR / "idiomx_pre_enrichment_sample.p
 DEFAULT_SAMPLE_OUTPUT_JSONL = DEFAULT_SAMPLE_DIR / "idiomx_batch_v2_sample.jsonl"
 
 MODEL_NAME = "gpt-4.1-mini"
-
-"""
-Prepare batch requests for IdiomX enrichment.
-
-Safe to run offline.
-This script does NOT call the API.
-It only reads the pre-enrichment dataset and writes JSONL batch requests.
-
-Supports:
-- full dataset mode
-- sample dataset mode
-- creating a small sample from the full dataset
-"""
 
 def build_prompt(idiom: str, meaning_en: str, example: str) -> str:
     """

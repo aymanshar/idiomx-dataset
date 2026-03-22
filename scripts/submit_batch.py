@@ -1,11 +1,12 @@
-from pathlib import Path
-import json
-from typing import Optional
-import argparse
-
-from config.api_config import client
-
 """
+IdiomX Dataset Pipeline
+
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
 Submit IdiomX batch enrichment job to OpenAI.
 
 This script uploads a prepared JSONL request file, creates a paid batch job,
@@ -19,12 +20,24 @@ Supports:
 - notebook execution with explicit paths
 - command-line execution
 - full mode and sample mode
-"""
 
-# NOTE:
+Notes:
 # This script is part of the scalable LLM enrichment pipeline, where
 # schema-constrained prompts are submitted asynchronously as batch jobs
 # to enrich the IdiomX dataset with bilingual meanings and example sentences.
+
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+from pathlib import Path
+import json
+from typing import Optional
+import argparse
+
+from config.api_config import client
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 

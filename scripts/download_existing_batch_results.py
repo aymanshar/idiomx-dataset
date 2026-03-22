@@ -1,11 +1,12 @@
-from pathlib import Path
-import json
-from typing import Optional
-import argparse
-
-from config.api_config import client
-
 """
+IdiomX Dataset Pipeline
+
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
 Download completed IdiomX batch results.
 
 This script retrieves the output file associated with a completed LLM batch job
@@ -17,7 +18,6 @@ Supports:
 - full mode and sample mode
 
 Examples
---------
 Notebook:
     download_results(
         batch_info_file=DATA_DIR / "sample" / "idiomx_batch_v2_sample_info.json",
@@ -34,11 +34,25 @@ CMD (explicit paths):
     python scripts/download_existing_batch_results.py ^
         --batch-info-file data/sample/idiomx_batch_v2_sample_info.json ^
         --output-path data/sample/idiomx_results_v2_sample.jsonl
-"""
 
-# NOTE:
+Notes:
 # This stage retrieves schema-constrained LLM outputs produced asynchronously
 # through batch processing, enabling scalable enrichment of the IdiomX dataset.
+
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+
+from pathlib import Path
+import json
+from typing import Optional
+import argparse
+
+from config.api_config import client
+
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 

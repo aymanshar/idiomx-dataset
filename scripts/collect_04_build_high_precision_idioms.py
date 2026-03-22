@@ -1,15 +1,29 @@
-import pandas as pd
-from pathlib import Path
-import sys
-import re
-
 """
+IdiomX Dataset Pipeline
+
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
 High-precision idiom selection stage.
 
 This script refines the cleaned Wiktionary idiom dataset by selecting only
 entries with strong idiomatic evidence. It applies signal-based filtering
 and ranking to produce a high-confidence idiom subset for downstream tasks.
+
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
 """
+
+import pandas as pd
+from pathlib import Path
+import sys
+import re
 
 # Project directories
 BASE_DIR = Path("..")

@@ -1,19 +1,32 @@
+"""
+IdiomX Dataset Pipeline
+
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
+Compute summary statistics for the final IdiomX dataset.
+This script analyzes dataset size, lexical diversity, token-length patterns,
+coverage of meanings/examples, and source distributions, then exports
+the results as JSON and CSV files for reporting and reproducibility.
+
+Notes:
+# This stage provides the descriptive statistics reported in the paper,
+# including dataset size, lexical diversity, coverage, and source composition.
+
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+
 from pathlib import Path
 import pandas as pd
 import json
 import re
-
-"""
-Compute summary statistics for the final IdiomX dataset.
-
-This script analyzes dataset size, lexical diversity, token-length patterns,
-coverage of meanings/examples, and source distributions, then exports
-the results as JSON and CSV files for reporting and reproducibility.
-"""
-
-# NOTE:
-# This stage provides the descriptive statistics reported in the paper,
-# including dataset size, lexical diversity, coverage, and source composition.
 
 # paths
 

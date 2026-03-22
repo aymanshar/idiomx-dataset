@@ -1,18 +1,32 @@
-from pathlib import Path
-import pandas as pd
-
 """
-Merge the Stage 3 idiom dataset with the normalized WordNet dataset.
+IdiomX Dataset Pipeline
 
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
+Merge the Stage 3 idiom dataset with the normalized WordNet dataset.
 This script expands the idiom inventory by adding WordNet multi-word expressions
 to the previously merged idiom dataset. The result is the Stage 4 dataset,
 which is later refined by global idiom filtering.
-"""
 
-# NOTE:
+Notes:
 # WordNet contributes lexical multi-word expressions rather than explicitly labeled idioms.
 # These entries are merged as medium-confidence idiom candidates and refined later
 # by the global idiom filtering stage.
+
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+
+from pathlib import Path
+import pandas as pd
+
 
 BASE_DIR = Path("..")
 DATA_PROCESS_DIR = BASE_DIR / "data" / "processed"
