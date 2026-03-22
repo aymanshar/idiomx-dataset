@@ -9,6 +9,14 @@ from config.api_config import client
 """
 Verify suspicious IdiomX rows using the API.
 
+LLM-based verification and correction stage for IdiomX dataset.
+
+This script re-evaluates rows flagged during validation using a structured
+LLM prompt, optionally correcting inconsistencies in examples, meanings,
+labels, and translations.
+
+This step acts as a semi-automatic quality assurance layer.
+
 WARNING:
 This script calls the API and may incur cost.
 Do not run unless you intentionally want to re-verify flagged rows.
@@ -18,6 +26,11 @@ Supports:
 - command-line execution
 - full mode and sample mode
 """
+
+# NOTE:
+# This stage introduces a human-in-the-loop style refinement using LLMs,
+# where only uncertain or problematic samples are re-evaluated,
+# significantly improving dataset quality while controlling cost.
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 
@@ -76,6 +89,10 @@ SCHEMA = {
 
 
 def get_mode_paths(use_sample: bool = False):
+    """
+    Return default input and output paths based on execution mode
+    (full dataset or sample dataset).
+    """
     if use_sample:
         return DEFAULT_SAMPLE_INPUT_CSV, DEFAULT_SAMPLE_OUTPUT_CSV
     return DEFAULT_FULL_INPUT_CSV, DEFAULT_FULL_OUTPUT_CSV
@@ -89,6 +106,13 @@ def verify_suspicious_rows(
 ):
     """
     Re-verify suspicious rows flagged by the validation stage.
+
+    Processes rows flagged during validation, checks semantic and structural
+    consistency, and applies corrections when necessary using a structured
+    JSON schema.
+
+    This stage improves dataset quality by combining rule-based validation
+    with model-assisted refinement.
 
     Parameters
     ----------
@@ -119,17 +143,21 @@ def verify_suspicious_rows(
     if "validation_status" not in df.columns:
         raise ValueError("Input CSV does not contain 'validation_status' column.")
 
+    # Select rows flagged during validation for re-verification
     review_df = df[df["validation_status"] == "needs_review"].copy()
 
     print(f"Rows marked for review: {len(review_df)}")
 
+    # If no suspicious rows exist, save dataset unchanged
     if len(review_df) == 0:
         output_csv.parent.mkdir(parents=True, exist_ok=True)
         df.to_csv(output_csv, index=False, encoding="utf-8-sig")
         print(f"No suspicious rows found. Saved unchanged dataset to: {output_csv}")
         return df
 
+    # Iterate over suspicious rows and validate them using the LLM
     for idx, row in tqdm(review_df.iterrows(), total=len(review_df), desc="Verifying suspicious rows"):
+        # Construct structured verification prompt with full idiom context
         prompt = f"""
 You are verifying a row in the IdiomX enriched dataset.
 
@@ -160,6 +188,7 @@ example_usage_label: {row.get('example_usage_label', '')}
 """
 
         try:
+            # Call LLM with strict JSON schema to enforce structured output
             response = client.responses.create(
                 model=model_name,
                 input=prompt,
@@ -173,25 +202,35 @@ example_usage_label: {row.get('example_usage_label', '')}
             else:
                 df.loc[idx, "validation_status"] = "invalid"
 
+            # Update dataset based on LLM validation and optional corrections
             if obj["correction_needed"]:
                 corrected = obj["corrected_entry"]
                 for k, v in corrected.items():
                     df.loc[idx, k] = v
                 df.loc[idx, "validation_status"] = "corrected"
 
+        # Handle API or parsing errors without breaking the pipeline
         except Exception as e:
             df.loc[idx, "validation_status"] = f"verification_error: {e}"
 
+    # Save final verified and corrected dataset
     output_csv.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(output_csv, index=False, encoding="utf-8-sig")
 
     print(f"Saved final verified dataset to: {output_csv}")
+    print("\nVerification summary:")
     print(df["validation_status"].value_counts(dropna=False))
+
+    corrected_ratio = (df["validation_status"] == "corrected").mean()
+    print(f"Correction rate: {corrected_ratio:.2%}")
 
     return df
 
 
 def parse_args():
+    """
+    Parse command-line arguments for LLM-based verification of suspicious rows.
+    """
     parser = argparse.ArgumentParser(description="Verify suspicious IdiomX rows.")
     parser.add_argument(
         "--sample",
