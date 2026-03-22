@@ -1,19 +1,17 @@
-from pathlib import Path
-import json
-from typing import Optional
-import argparse
-
-from config.api_config import client
-
 """
-Batch monitoring utility for IdiomX LLM enrichment pipeline.
+IdiomX Dataset Pipeline
 
+Author: Ayman Ali Sharara
+Project: IdiomX – Neural Understanding of English Idioms
+github: https://github.com/aymanshar/idiomx-dataset
+Year: 2026
+
+Description:
+Batch monitoring utility for IdiomX LLM enrichment pipeline.
 This script retrieves the status of previously submitted batch jobs,
 allowing tracking of large-scale LLM generation tasks used for
 dataset augmentation and enrichment.
-"""
 
-"""
 Check status of an existing IdiomX batch job.
 
 Supports:
@@ -33,12 +31,29 @@ CMD (full):
 
 CMD (sample):
     python scripts/check_existing_batch.py --sample
-"""
-# NOTE:
+
+Outputs:
+- a stricter idiom subset used in later cleaning, normalization, and merging steps
+
+Notes:
 # This script is part of the large-scale LLM-based data enrichment pipeline,
 # where idiom examples and annotations are generated asynchronously using batch jobs.
+License:
+MIT License (see LICENSE file)
+
+Citation:
+If you use this code or dataset, please cite the IdiomX paper.
+"""
+from pathlib import Path
+import json
+from typing import Optional
+import argparse
 
 BASE_DIR = Path(__file__).resolve().parents[1]
+
+from config.api_config import client
+
+
 
 # Full-mode defaults
 DEFAULT_FULL_BATCH_INFO_FILE = BASE_DIR / "data" / "batches" / "idiomx_batch_info.json"
