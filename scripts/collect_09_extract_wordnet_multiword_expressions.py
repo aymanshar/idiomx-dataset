@@ -3,11 +3,12 @@ import pandas as pd
 import nltk
 from nltk.corpus import wordnet as wn
 
-# ============================================================
-# Default project paths
-# This allows the script to run directly from CMD while also
-# letting the notebook pass custom output paths if needed.
-# ============================================================
+"""
+# NOTE:
+# WordNet does not explicitly label idioms.
+# This extraction captures multi-word expressions, which may include  collocations, compounds, and idiomatic phrases.
+# Therefore, this source is labeled as medium-confidence.
+"""
 
 BASE_DIR = Path("..")
 DATA_PROCESS_DIR = BASE_DIR / "data" / "processed"
@@ -19,7 +20,8 @@ OUTPUT_FILE = DATA_PROCESS_DIR / "idioms_source_wordnet_normalized.csv"
 def ensure_wordnet_downloaded():
     """
     Ensure the NLTK WordNet corpus is available locally.
-    If not found, download it once.
+
+    If not present, it downloads the required resources automatically.
     """
     try:
         wn.synsets("dog")
@@ -31,8 +33,14 @@ def ensure_wordnet_downloaded():
 
 def extract_wordnet_multiword_expressions(output_file=OUTPUT_FILE):
     """
-    Extract multi-word expressions from WordNet and save them
-    in the normalized project schema.
+    Extract multi-word expressions from WordNet as candidate idioms.
+
+    This function iterates over all WordNet synsets, extracts lemma names,
+    filters multi-word expressions, and maps them into the standardized
+    IdiomX dataset schema.
+
+    These entries are considered medium-confidence idioms and serve as
+    a lexical expansion resource rather than strictly validated idioms.
 
     Parameters
     ----------
@@ -53,19 +61,23 @@ def extract_wordnet_multiword_expressions(output_file=OUTPUT_FILE):
 
     rows = []
 
-    # Iterate through all WordNet synsets
+    # Iterate through all WordNet synsets to extract lexical expressions
     for synset in wn.all_synsets():
         definition = synset.definition()
         pos = synset.pos()
 
-        # Collect lemma names and keep only multi-word expressions
+        # Extract lemma names and convert WordNet format (underscores → spaces)
         for lemma in synset.lemmas():
             name = lemma.name().replace("_", " ").strip()
 
-            # Keep only expressions made of more than one word
+            # Normalize to lowercase for consistency across sources
+            name = name.lower()
+
+            # Keep only multi-word expressions (potential idioms or phrases)
             if " " not in name:
                 continue
 
+            # Map extracted expression into unified IdiomX schema
             rows.append({
                 "idiom": name,
                 "meaning_en": definition,
@@ -80,7 +92,7 @@ def extract_wordnet_multiword_expressions(output_file=OUTPUT_FILE):
 
     df = pd.DataFrame(rows)
 
-    # Remove exact duplicate idiom-meaning pairs
+    # Remove duplicate idiom-meaning pairs to reduce redundancy
     df = df.drop_duplicates(subset=["idiom", "meaning_en"]).reset_index(drop=True)
 
     # Save normalized output
@@ -95,7 +107,7 @@ def extract_wordnet_multiword_expressions(output_file=OUTPUT_FILE):
 
 def main():
     """
-    Command-line entry point using the default output path.
+    Run WordNet extraction pipeline using default output path.
     """
     df = extract_wordnet_multiword_expressions()
     print("\nPreview:")

@@ -3,11 +3,22 @@ import json
 import pandas as pd
 from json_repair import repair_json as repair_llm_json
 
-BASE_DIR = Path(__file__).resolve().parents[1]
+"""
+Merge LLM batch results into the final enriched IdiomX dataset.
 
-# ==============================
-# Default paths (FULL)
-# ==============================
+This script aligns raw batch outputs with the original pre-enrichment dataset,
+repairs malformed JSON if needed, expands generated examples into structured rows,
+and exports the enriched dataset for downstream analysis and modeling.
+"""
+
+# NOTE:
+# This stage transforms schema-constrained LLM outputs into the final row-level
+# enrichment dataset, enabling direct use in bilingual idiom modeling,
+# retrieval tasks, and downstream analysis.
+
+# paths
+
+BASE_DIR = Path(__file__).resolve().parents[1]
 DEFAULT_RAW_FILE = BASE_DIR / "data" / "processed" / "idiomx_pre_enrichment.parquet"
 DEFAULT_RESULTS_JSONL = BASE_DIR / "data" / "results" / "idiomx_results.jsonl"
 DEFAULT_OUTPUT_CSV = BASE_DIR / "data" / "enriched" / "idiomx_enriched_full.csv"
@@ -20,7 +31,7 @@ SAMPLE_RESULTS_JSONL = BASE_DIR / "data" / "sample" / "idiomx_results_sample.jso
 SAMPLE_OUTPUT_CSV = BASE_DIR / "data" / "sample" / "idiomx_enriched_sample.csv"
 SAMPLE_OUTPUT_PARQUET = BASE_DIR / "data" / "sample" / "idiomx_enriched_sample.parquet"
 
-
+# Final standardized schema for the enriched IdiomX dataset
 FINAL_COLUMNS = [
     "idiom_id", "idiom_canonical", "idiom_surface", "example",
     "idiom_canonical_meaning", "source", "source_type", "pos", "tags",
@@ -36,6 +47,11 @@ FINAL_COLUMNS = [
 
 
 def extract_output_text(body: dict):
+    """
+    Extract the generated text content from the batch response body.
+
+    Returns the first output_text message if available, otherwise None.
+    """
     for item in body.get("output", []):
         if item.get("type") == "message":
             for content_item in item.get("content", []):
@@ -49,23 +65,35 @@ def merge_results(
     results_jsonl: Path = DEFAULT_RESULTS_JSONL,
     output_csv: Path = DEFAULT_OUTPUT_CSV,
     output_parquet: Path = DEFAULT_OUTPUT_PARQUET,
-):
+    ):
+    """
+    Merge LLM batch outputs with the raw pre-enrichment dataset.
+
+    Parses batch results, repairs malformed JSON when possible, expands generated
+    examples into row-level records, and saves the final enriched dataset in CSV
+    and Parquet formats.
+    """
     print("Raw file:", raw_file)
     print("Results file:", results_jsonl)
 
+    # Load the original pre-enrichment dataset used to create the batch requests
     raw_df = pd.read_parquet(raw_file)
     rows = []
 
+    # Iterate through batch results and align each response with its source row
     with open(results_jsonl, "r", encoding="utf-8") as f:
         for line in f:
             record = json.loads(line)
 
+            # Recover the original row index from the batch custom_id
             custom_id = record.get("custom_id", "")
+            # Assumes custom_id ends with the original row index (e.g., idiomx_v2_123)
             idx = int(custom_id.split("_")[-1])
 
             raw_row = raw_df.iloc[idx]
             body = record["response"]["body"]
 
+            # Extract the structured text payload returned by the LLM
             output_text = extract_output_text(body)
             if not output_text:
                 print(f"Skipping {custom_id}: no output_text")
@@ -76,18 +104,22 @@ def merge_results(
 
             except Exception:
                 try:
+                    # Parse the LLM JSON output; attempt repair if the response is malformed
                     repaired = repair_llm_json(output_text)
                     obj = json.loads(repaired)
+                    # Attempt lightweight recovery for malformed but recoverable LLM JSON responses
                     print(f"Repaired JSON for {custom_id}")
                 except Exception as e:
                     print(f"Skipping {custom_id}: invalid JSON - {e}")
                     continue
 
+            # Expand example-level outputs into one row per generated example
             examples = obj.get("examples", [])
             if len(examples) != 8:
                 print(f"Warning: {custom_id} returned {len(examples)} examples")
 
             for ex in examples:
+                # Combine source metadata, idiom-level enrichment, and example-level enrichment
                 row = {
                     "idiom_id": raw_row.get("idiom_id", ""),
                     "idiom_canonical": obj.get("idiom_canonical", raw_row.get("idiom_canonical", "")),
@@ -128,8 +160,11 @@ def merge_results(
                 rows.append(row)
 
     out_df = pd.DataFrame(rows)
+
+    # Reorder columns to match the final IdiomX enriched schema
     out_df = out_df.reindex(columns=FINAL_COLUMNS)
 
+    # Save enriched dataset in both CSV and Parquet formats
     output_csv.parent.mkdir(parents=True, exist_ok=True)
     out_df.to_csv(output_csv, index=False, encoding="utf-8-sig")
     out_df.to_parquet(output_parquet, index=False)
@@ -137,7 +172,9 @@ def merge_results(
     print("Saved CSV:", output_csv)
     print("Saved Parquet:", output_parquet)
     print("Total rows:", len(out_df))
-    print(out_df["example_usage_label"].value_counts(dropna=False))
+
+    if not out_df.empty:
+        print(out_df["example_usage_label"].value_counts(dropna=False))
 
     return out_df
 

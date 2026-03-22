@@ -1,11 +1,18 @@
 from pathlib import Path
 import pandas as pd
 
-# ============================================================
-# Default project paths
-# These defaults allow the script to run directly from CMD,
-# while still allowing custom paths from a notebook.
-# ============================================================
+"""
+Merge the Stage 3 idiom dataset with the normalized WordNet dataset.
+
+This script expands the idiom inventory by adding WordNet multi-word expressions
+to the previously merged idiom dataset. The result is the Stage 4 dataset,
+which is later refined by global idiom filtering.
+"""
+
+# NOTE:
+# WordNet contributes lexical multi-word expressions rather than explicitly labeled idioms.
+# These entries are merged as medium-confidence idiom candidates and refined later
+# by the global idiom filtering stage.
 
 BASE_DIR = Path("..")
 DATA_PROCESS_DIR = BASE_DIR / "data" / "processed"
@@ -20,12 +27,9 @@ DEFAULT_WORDNET_FILE = DATA_PROCESS_DIR / "idioms_source_wordnet_normalized.csv"
 # Output merged dataset
 DEFAULT_OUTPUT_FILE = DATA_PROCESS_DIR / "idioms_dataset_stage4.csv"
 
-# ============================================================
-# Standard schema
 # Any missing columns will be added automatically to keep
-# the merged dataset consistent across all sources.
-# ============================================================
 
+# Shared IdiomX schema used to align heterogeneous lexical resources
 STANDARD_COLUMNS = [
     "idiom",
     "meaning_en",
@@ -45,8 +49,10 @@ def merge_stage3_with_wordnet(
     output_file=DEFAULT_OUTPUT_FILE,
 ):
     """
-    Merge the current master idiom dataset (stage3) with the
-    normalized WordNet multi-word expressions dataset.
+    Merge the Stage 3 idiom dataset with the normalized WordNet dataset.
+
+    Aligns schemas, normalizes text fields, removes duplicate idiom-meaning pairs,
+    and saves the merged Stage 4 dataset for downstream filtering.
 
     Parameters
     ----------
@@ -79,10 +85,12 @@ def merge_stage3_with_wordnet(
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
     # Read both datasets
+    # Load the current merged idiom dataset and the WordNet source dataset
     df_stage3 = pd.read_csv(stage3_file, encoding="utf-8-sig")
     df_wordnet = pd.read_csv(wordnet_file, encoding="utf-8-sig")
 
     # Add missing standard columns if needed
+    # Ensure both datasets share the same schema before concatenation
     for col in STANDARD_COLUMNS:
         if col not in df_stage3.columns:
             df_stage3[col] = ""
@@ -93,14 +101,14 @@ def merge_stage3_with_wordnet(
     df_stage3 = df_stage3[STANDARD_COLUMNS]
     df_wordnet = df_wordnet[STANDARD_COLUMNS]
 
-    # Concatenate the datasets
+    # Merge curated idioms with WordNet-derived multi-word expressions
     df_merged = pd.concat([df_stage3, df_wordnet], ignore_index=True)
 
-    # Normalize text values to reduce duplicate mismatches
+    # Normalize text fields to improve matching and deduplication consistency
     for col in STANDARD_COLUMNS:
         df_merged[col] = df_merged[col].fillna("").astype(str).str.strip()
 
-    # Create a deduplication key using idiom + meaning
+    # Build a stable deduplication key from idiom text and English meaning
     df_merged["dedup_key"] = (
         df_merged["idiom"].str.lower().str.strip()
         + " || " +
@@ -115,7 +123,7 @@ def merge_stage3_with_wordnet(
         .reset_index(drop=True)
     )
 
-    # Save the merged dataset
+    # Save the Stage 4 merged dataset for the next filtering stage
     df_merged.to_csv(output_file, index=False, encoding="utf-8-sig")
 
     # Print a quick summary
@@ -130,7 +138,7 @@ def merge_stage3_with_wordnet(
 
 def main():
     """
-    Command-line entry point using the default project paths.
+    Run the Stage 3 + WordNet merge pipeline using the default project paths.
     """
     df_merged = merge_stage3_with_wordnet()
     print("\nPreview:")

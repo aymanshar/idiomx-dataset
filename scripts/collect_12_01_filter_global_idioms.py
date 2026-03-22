@@ -2,11 +2,22 @@ from pathlib import Path
 import pandas as pd
 import re
 
-# ============================================================
-# Default project paths
-# These defaults make the script easy to run from the command
-# line while still allowing custom paths from a notebook.
-# ============================================================
+"""
+Global idiom filtering and dataset refinement stage.
+
+This script applies heuristic rules and confidence modeling to transform
+the merged idiom dataset into two final forms:
+- Broad dataset (higher recall, more coverage)
+- High-precision dataset (clean, reliable idioms)
+
+This stage is critical for balancing dataset quality and coverage.
+"""
+
+# NOTE:
+# This stage implements a heuristic-based confidence modeling strategy.
+# It separates idioms into broad and high-precision subsets, enabling
+# different downstream use cases such as recall-oriented retrieval
+# and precision-focused model training.
 
 BASE_DIR = Path("..")
 DATA_PROCESS_DIR = BASE_DIR / "data" / "processed"
@@ -64,10 +75,7 @@ BAD_LITERAL_WORDS = {
     "bank", "office", "police station", "data science"
 }
 
-
-# ============================================================
 # Helper functions
-# ============================================================
 
 def norm(x):
     """Safely normalize a single scalar value into a stripped string."""
@@ -78,6 +86,10 @@ def norm(x):
 
 def normalize_dataframe(df):
     """
+    Ensure all expected columns exist and normalize their values.
+
+    Fills missing columns, converts to string, and trims whitespace.
+
     Normalize the expected text columns:
     - fill nulls
     - cast to string
@@ -97,25 +109,36 @@ def normalize_dataframe(df):
 
 
 def good_length(idiom):
-    """Keep only multi-word expressions with a reasonable token length."""
+    """
+    Keep idioms within a reasonable token length (2–7 words).
+    """
     idiom = norm(idiom)
     n = len(idiom.split())
     return 2 <= n <= 7
 
 
 def has_letters(idiom):
-    """Reject entries that do not contain alphabetic characters."""
+    """
+    Reject entries that do not contain alphabetic characters.
+    Ensure the idiom contains alphabetic characters
+    """
     return bool(re.search(r"[A-Za-z]", norm(idiom)))
 
 
 def bad_symbolic(idiom):
-    """Reject symbolic or malformed expressions."""
+    """
+    Reject symbolic or malformed expressions.
+    Remove entries containing symbolic or malformed characters.
+    """
     idiom = norm(idiom)
     return bool(re.search(r"[<>[\]{}_=+*/\\]", idiom))
 
 
 def bad_meaning(meaning):
-    """Reject overly literal / academic / taxonomic meaning patterns."""
+    """
+    Reject overly literal / academic / taxonomic meaning patterns.
+    Detect meanings that indicate literal, academic, or taxonomic definitions
+    """
     meaning = norm(meaning).lower()
     for pat in BAD_MEANING_PATTERNS:
         if re.search(pat, meaning):
@@ -146,7 +169,11 @@ def normalize_meaning_text(text):
 def strong_idiom_signal(row):
     """
     High-precision idiom signal:
+
     keep records with strong evidence that they are idioms.
+
+    Identify high-confidence idioms using strong lexical, syntactic,
+    and source-based signals.
     """
     tags = norm(row["tags"]).lower()
     pos = norm(row["pos"]).lower()
@@ -229,6 +256,12 @@ def build_high_precision_dataset(df):
     """
     df_high = df[df.apply(strong_idiom_signal, axis=1)].copy()
 
+    # Weighted scoring prioritizes:
+    # - curated datasets (PhraseFinder, Kaggle)
+    # - strong lexical signals (tags, POS)
+    # - presence of examples
+    # - lower weight for WordNet expansions
+
     df_high["score"] = 0
     df_high.loc[df_high["source"].isin(["phrasefinder", "kaggle_english_idioms"]), "score"] += 4
     df_high.loc[df_high["source"].eq("kaikki_wiktionary"), "score"] += 3
@@ -269,17 +302,23 @@ def build_statistics(df_input, df_broad, df_high):
     }
     return stats
 
-
-# ============================================================
 # Main pipeline function
-# ============================================================
 
 def filter_global_idioms(
     input_file=INPUT_FILE,
     output_broad=OUTPUT_BROAD,
     output_high=OUTPUT_HIGH,
-):
+    ):
     """
+    Apply global filtering and confidence modeling to the merged idiom dataset.
+
+    This pipeline performs structural cleaning, heuristic filtering, and
+    confidence-based selection to produce two datasets:
+    - a broad idiom dataset (high recall)
+    - a high-precision idiom dataset (high precision)
+
+    It also generates summary statistics for analysis and reporting.
+
     Run the global filtering pipeline on the merged idiom dataset:
     - cleaning
     - normalization
@@ -317,27 +356,28 @@ def filter_global_idioms(
     df = pd.read_csv(input_file, encoding="utf-8-sig")
     df = normalize_dataframe(df)
 
-    # Basic structural cleaning
+    # Build broad dataset to retain wider idiom coverage (higher recall)
     df = df[df["idiom"].apply(good_length)]
     df = df[df["idiom"].apply(has_letters)]
     df = df[~df["idiom"].apply(bad_symbolic)]
     df = df[~df["meaning_en"].apply(bad_meaning)]
     df = df.reset_index(drop=True)
 
-    # Broad dataset
+    # Build broad dataset to retain wider idiom coverage (higher recall)
     df_broad = df[df.apply(broad_signal, axis=1)].copy()
     df_broad = deduplicate_idiom_meaning(df_broad)
     df_broad = df_broad.sort_values(["idiom", "meaning_en"]).reset_index(drop=True)
 
-    # High-precision dataset
+    # Build high-precision dataset focusing on strongly validated idioms
     df_high = build_high_precision_dataset(df)
     df_high = df_high.sort_values(["idiom", "meaning_en"]).reset_index(drop=True)
 
-    # Save outputs
+    # Save both dataset variants for downstream modeling and evaluation
     df_broad.to_csv(output_broad, index=False, encoding="utf-8-sig")
     df_high.to_csv(output_high, index=False, encoding="utf-8-sig")
 
     # Build stats
+    # Generate summary statistics for analysis and research reporting
     stats = build_statistics(df, df_broad, df_high)
 
     # Print summary for command-line usage

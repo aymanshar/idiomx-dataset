@@ -29,6 +29,12 @@ Supports:
 """
 
 def build_prompt(idiom: str, meaning_en: str, example: str) -> str:
+    """
+        Build the LLM instruction prompt for enriching a single idiom entry.
+
+        Includes idiom analysis, bilingual meaning generation, and example generation
+        (idiomatic and literal) in a structured format.
+    """
     return f"""
 You are an expert linguist specializing in English idioms, literal language usage, bilingual semantics, and dataset construction for NLP research.
 
@@ -100,6 +106,12 @@ Important rules:
 """
 
 def get_response_schema():
+    """
+        Build the LLM instruction prompt for enriching a single idiom entry.
+
+        Includes idiom analysis, bilingual meaning generation, and example generation
+        (idiomatic and literal) in a structured format.
+    """
     return {
         "type": "json_schema",
         "name": "idiomx_v2_enrichment",
@@ -188,6 +200,9 @@ def create_sample_dataset(
     """
     Create a small sample dataset from the full pre-enrichment dataset.
 
+    Useful for testing the pipeline quickly before running on the full dataset.
+    Supports head or random sampling.
+
     Parameters
     ----------
     full_input_file : Path
@@ -224,7 +239,9 @@ def create_sample_dataset(
 
 def get_mode_paths(use_sample: bool = False):
     """
-    Return input/output paths based on mode.
+    Return input and output paths based on execution mode.
+
+    Switches between full dataset mode and sample dataset mode.
     """
     if use_sample:
         return DEFAULT_SAMPLE_INPUT_FILE, DEFAULT_SAMPLE_OUTPUT_JSONL
@@ -236,7 +253,10 @@ def prepare_batch_requests(
     use_sample: bool = False,
 ):
     """
-    Prepare JSONL batch requests from the chosen input dataset.
+    Convert the input dataset into JSONL batch requests for the LLM API.
+
+    Each row becomes one request with a structured prompt and response schema.
+    Supports both full dataset and sample dataset modes.
     """
     if input_file is None or output_jsonl is None:
         default_input, default_output = get_mode_paths(use_sample=use_sample)

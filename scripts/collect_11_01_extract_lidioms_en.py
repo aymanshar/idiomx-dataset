@@ -6,12 +6,47 @@ import requests
 import zipfile
 import io
 
+"""
+Extract English idiom-like expressions from the LIdioms semantic dataset.
 
+This script downloads the dataset if needed, parses RDF files, extracts
+idiom labels, meanings, and examples, and converts them into the standardized
+IdiomX source schema for later merging.
+"""
+
+# NOTE:
+# LIdioms is a linked-data idiom resource represented in RDF format.
+# Unlike dictionary-style sources, this dataset contributes semantically
+# structured idiomatic expressions and improves source diversity.
+
+# Official ZIP archive used to download the LIdioms dataset
 LIDIOMS_REPO_ZIP = "https://github.com/dice-group/LIdioms/archive/refs/heads/master.zip"
-# Supported RDF-like extensions
+
+# File extensions treated as RDF-like resources
 RDF_EXTS = {".ttl", ".nt", ".rdf", ".owl", ".n3", ".xml"}
 
+# Default project paths
+
+BASE_DIR = Path("..")
+DATA_RAW_DIR = BASE_DIR / "data" / "raw"
+DATA_PROCESS_DIR = BASE_DIR / "data" / "processed"
+DATA_PROCESS_DIR.mkdir(parents=True, exist_ok=True)
+
+# Expected local LIdioms folder
+DEFAULT_LIDIOMS_ROOT = DATA_RAW_DIR / "LIdioms" / "en"
+
+# Output normalized CSV
+DEFAULT_OUTPUT_FILE = DATA_PROCESS_DIR / "idioms_source_lidioms_normalized.csv"
+
+# Predicate hints used to detect relevant fields in RDF
+LABEL_HINTS = {"label", "prefLabel", "writtenRep", "canonicalForm"}
+DEF_HINTS = {"definition", "senseDefinition", "gloss", "note", "description"}
+EXAMPLE_HINTS = {"example", "usage", "usageExample"}
+
 def has_rdf_files(root: Path) -> bool:
+    """
+    Check whether the target directory contains any RDF-like files.
+    """
     if not root.exists():
         return False
     return any(p.suffix.lower() in RDF_EXTS for p in root.rglob("*"))
@@ -19,8 +54,10 @@ def has_rdf_files(root: Path) -> bool:
 
 def ensure_lidioms_dataset(lidioms_root: Path):
     """
-    Ensure the local LIdioms English RDF dataset exists.
-    If the target folder is missing or empty, download and extract it.
+    Ensure that the local English LIdioms RDF dataset exists.
+
+    If the target folder is missing or empty, download and extract the dataset
+    from the official repository.
     """
     lidioms_root = Path(lidioms_root)
 
@@ -32,6 +69,7 @@ def ensure_lidioms_dataset(lidioms_root: Path):
     raw_dir.mkdir(parents=True, exist_ok=True)
 
     print("Downloading LIdioms dataset...")
+    # Download and extract the dataset only if local RDF files are missing
     r = requests.get(LIDIOMS_REPO_ZIP, timeout=120)
     r.raise_for_status()
 
@@ -54,34 +92,19 @@ def ensure_lidioms_dataset(lidioms_root: Path):
         )
 
     print(f"LIdioms dataset ready: {lidioms_root}")
-# ============================================================
-# Default project paths
-# ============================================================
-
-BASE_DIR = Path("..")
-DATA_RAW_DIR = BASE_DIR / "data" / "raw"
-DATA_PROCESS_DIR = BASE_DIR / "data" / "processed"
-DATA_PROCESS_DIR.mkdir(parents=True, exist_ok=True)
-
-# Expected local LIdioms folder
-DEFAULT_LIDIOMS_ROOT = DATA_RAW_DIR / "LIdioms" / "en"
-
-# Output normalized CSV
-DEFAULT_OUTPUT_FILE = DATA_PROCESS_DIR / "idioms_source_lidioms_normalized.csv"
-
-# Predicate hints used to detect relevant fields in RDF
-LABEL_HINTS = {"label", "prefLabel", "writtenRep", "canonicalForm"}
-DEF_HINTS = {"definition", "senseDefinition", "gloss", "note", "description"}
-EXAMPLE_HINTS = {"example", "usage", "usageExample"}
 
 
 def is_english_literal(obj):
-    """Keep only English or language-neutral RDF literals."""
+    """
+    Keep only English or language-neutral RDF literals for extraction.
+    """
     return isinstance(obj, Literal) and (obj.language in (None, "en", "en-gb", "en-us"))
 
 
 def pred_name(pred):
-    """Extract a readable predicate name from an RDF URI."""
+    """
+    Extract a readable predicate name from an RDF predicate URI.
+    """
     txt = str(pred)
     if "#" in txt:
         return txt.split("#")[-1]
@@ -89,19 +112,27 @@ def pred_name(pred):
 
 
 def norm(x):
-    """Normalize whitespace and convert null-like values to empty strings."""
+    """
+    Extract a readable predicate name from an RDF predicate URI.
+    """
     if x is None:
         return ""
     return " ".join(str(x).strip().split())
 
 
 def collect_rdf_files(root: Path):
-    """Recursively collect RDF-like files from the LIdioms folder."""
+    """
+    Recursively collect RDF-like files from the LIdioms directory.
+    """
     return [p for p in root.rglob("*") if p.suffix.lower() in RDF_EXTS]
 
 
 def parse_file(path: Path):
-    """Parse one RDF file into an rdflib Graph."""
+    """
+    Parse a single RDF file into an rdflib graph.
+
+    Returns None if parsing fails.
+    """
     g = Graph()
     try:
         g.parse(path)
@@ -114,6 +145,10 @@ def parse_file(path: Path):
 def extract_records_from_graph(g: Graph):
     """
     Extract idiom-like records from one RDF graph.
+
+    Identifies idiom labels, meanings, and examples using predicate hints,
+    then maps them into the standardized IdiomX source schema.
+
     We try to detect:
     - label/canonical form -> idiom
     - definition/gloss -> meaning
@@ -176,6 +211,9 @@ def extract_lidioms_en(
     """
     Extract English idiom-like entries from the local LIdioms RDF dataset.
 
+    Downloads the dataset if needed, parses RDF files, extracts idiom records,
+    normalizes the output schema, and saves the resulting CSV file.
+
     Parameters
     ----------
     lidioms_root : path-like
@@ -194,13 +232,13 @@ def extract_lidioms_en(
 
     ensure_lidioms_dataset(lidioms_root)
 
-    files = collect_rdf_files(lidioms_root)
     if not lidioms_root.exists():
         raise FileNotFoundError(
             f"LIdioms root not found: {lidioms_root}\n"
             f"Expected something like: data/raw/LIdioms/en"
         )
 
+    # Parse RDF files one by one and accumulate extracted idiom records
     files = collect_rdf_files(lidioms_root)
 
     if not files:
@@ -212,6 +250,7 @@ def extract_lidioms_en(
 
     rows = []
 
+    # Parse RDF files one by one and accumulate extracted idiom records
     for f in files:
         g = parse_file(f)
         if g is None:
@@ -225,6 +264,7 @@ def extract_lidioms_en(
         df.to_csv(output_file, index=False, encoding="utf-8-sig")
         return df
 
+    # Normalize extracted fields and ensure schema consistency
     for col in [
         "idiom", "meaning_en", "example", "source", "source_type",
         "pos", "tags", "idiom_confidence", "source_url"
@@ -233,7 +273,7 @@ def extract_lidioms_en(
             df[col] = ""
         df[col] = df[col].fillna("").astype(str).str.strip()
 
-    # Keep only valid multi-word idiom candidates
+    # Keep only valid non-empty multi-word idiom candidates
     df = df[
         (df["idiom"] != "") &
         (df["idiom"].str.contains(" "))
@@ -246,12 +286,14 @@ def extract_lidioms_en(
         df["meaning_en"].str.lower().str.strip()
     )
 
+    # Remove duplicate idiom-meaning pairs to keep the dataset compact
     df = (
         df.drop_duplicates(subset=["dedup_key"])
           .drop(columns=["dedup_key"])
           .reset_index(drop=True)
     )
 
+    # Save normalized LIdioms source dataset for later merging
     df.to_csv(output_file, index=False, encoding="utf-8-sig")
 
     print("Saved:", output_file)
@@ -262,6 +304,9 @@ def extract_lidioms_en(
 
 
 def main():
+    """
+    Run the LIdioms extraction pipeline using the default input and output paths.
+    """
     df = extract_lidioms_en()
     print("\nPreview:")
     print(df.head())

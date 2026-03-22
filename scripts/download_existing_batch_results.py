@@ -8,6 +8,9 @@ from config.api_config import client
 """
 Download completed IdiomX batch results.
 
+This script retrieves the output file associated with a completed LLM batch job
+and saves the JSONL results locally for later parsing and dataset merging.
+
 Supports:
 - notebook execution with explicit paths
 - command-line execution
@@ -33,6 +36,10 @@ CMD (explicit paths):
         --output-path data/sample/idiomx_results_v2_sample.jsonl
 """
 
+# NOTE:
+# This stage retrieves schema-constrained LLM outputs produced asynchronously
+# through batch processing, enabling scalable enrichment of the IdiomX dataset.
+
 BASE_DIR = Path(__file__).resolve().parents[1]
 
 # Full-mode defaults
@@ -46,7 +53,8 @@ DEFAULT_SAMPLE_OUTPUT_PATH = BASE_DIR / "data" / "sample" / "idiomx_results_v2_s
 
 def get_mode_paths(use_sample: bool = False) -> tuple[Path, Path]:
     """
-    Return default batch-info and output paths based on mode.
+    Return the default batch-info and result-output paths for either
+    full mode or sample mode.
     """
     if use_sample:
         return DEFAULT_SAMPLE_BATCH_INFO_FILE, DEFAULT_SAMPLE_OUTPUT_PATH
@@ -79,6 +87,9 @@ def download_results(
     """
     Download completed batch results from the API.
 
+    Supports both explicit batch IDs and loading from stored batch metadata,
+    and works in full-data or sample-data mode.
+
     Parameters
     ----------
     batch_id : Optional[str]
@@ -103,8 +114,13 @@ def download_results(
     if batch_id is None:
         batch_id = load_batch_id(batch_info_file)
 
-    batch = client.batches.retrieve(batch_id)
+    # Retrieve batch metadata from the API to verify completion and locate output file
+    try:
+        batch = client.batches.retrieve(batch_id)
+    except Exception as e:
+        raise RuntimeError(f"Failed to retrieve batch metadata for batch_id={batch_id}: {e}")
 
+    # Only completed batches can be downloaded safely
     if batch.status != "completed":
         raise ValueError(f"Batch is not completed yet. Current status: {batch.status}")
 
@@ -112,8 +128,13 @@ def download_results(
     if not output_file_id:
         raise ValueError("No output_file_id found for completed batch.")
 
-    content = client.files.content(output_file_id)
+    # Download raw JSONL result content for the completed batch
+    try:
+        content = client.files.content(output_file_id)
+    except Exception as e:
+        raise RuntimeError(f"Failed to download output file {output_file_id}: {e}")
 
+    # Save the downloaded batch results to disk for downstream parsing and merging
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "wb") as f:
         f.write(content.read())
@@ -123,6 +144,10 @@ def download_results(
 
 
 def parse_args():
+    """
+    Parse command-line arguments for downloading completed batch results.
+    """
+    # Configure CLI interface for downloading batch results in full or sample mode
     parser = argparse.ArgumentParser(description="Download completed IdiomX batch results.")
     parser.add_argument(
         "--sample",

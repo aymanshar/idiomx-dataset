@@ -5,9 +5,6 @@ from pathlib import Path
 from tqdm import tqdm
 import sys
 
-# =========================
-# CONFIG
-# =========================
 
 # Project directories
 BASE_DIR = Path("..")
@@ -83,6 +80,9 @@ MULTISPACE_RE = re.compile(r"\s+")
 
 
 def normalize_text(text: str) -> str:
+    """
+    Normalize text by trimming whitespace and collapsing multiple spaces.
+    """
     if text is None:
         return ""
     text = str(text).strip()
@@ -91,6 +91,10 @@ def normalize_text(text: str) -> str:
 
 
 def looks_like_english_phrase(word: str) -> bool:
+    """
+    Check if a word is a valid English multiword expression candidate.
+    Filters out noise, non-English patterns, and non-phrase entries.
+    """
     word = normalize_text(word)
     if not word or word in BAD_EXACT:
         return False
@@ -115,6 +119,10 @@ def looks_like_english_phrase(word: str) -> bool:
 
 
 def contains_idiom_hint(sense: dict) -> bool:
+    """
+    Detect whether a sense contains signals of idiomatic or figurative usage.
+    Uses tags and gloss text to identify idiom-related patterns.
+    """
     tags = [str(x).lower() for x in sense.get("tags", []) if x]
     raw_glosses = sense.get("raw_glosses", []) or []
     glosses = sense.get("glosses", []) or []
@@ -129,6 +137,9 @@ def contains_idiom_hint(sense: dict) -> bool:
 
 
 def pick_example(sense: dict) -> str:
+    """
+    Extract the first valid example sentence from a sense entry.
+    """
     examples = sense.get("examples", []) or []
     for ex in examples:
         if isinstance(ex, dict):
@@ -143,6 +154,9 @@ def pick_example(sense: dict) -> str:
 
 
 def pick_meaning(sense: dict) -> str:
+    """
+    Extract the primary meaning from a sense using glosses or raw glosses.
+    """
     glosses = sense.get("glosses", []) or []
     for g in glosses:
         g = normalize_text(g)
@@ -159,6 +173,9 @@ def pick_meaning(sense: dict) -> str:
 
 
 def sense_is_useful(sense: dict) -> bool:
+    """
+    Filter out non-lexical or noisy senses such as inflections or spelling variants.
+    """
     meaning = pick_meaning(sense)
     if not meaning:
         return False
@@ -185,6 +202,10 @@ def sense_is_useful(sense: dict) -> bool:
 
 
 def entry_to_rows(entry: dict, strict_mode: bool = False):
+    """
+    Convert a single Kaikki dictionary entry into structured idiom candidate rows.
+    Applies filtering, extracts meaning/example, and labels idiom hints.
+    """
     word = normalize_text(entry.get("word", ""))
     lang = normalize_text(entry.get("lang", ""))
     pos = normalize_text(entry.get("pos", "")).lower()
@@ -247,6 +268,11 @@ def extract_kaikki_idioms(
     """
         Extract idiom-like multiword expressions from Kaikki English Wiktionary JSONL.
 
+        Processes entries, filters valid multiword phrases, removes noise,
+        and outputs structured idiom candidates to CSV and JSONL formats.
+
+        Supports optional strict filtering for higher precision extraction.
+
         Parameters
         ----------
         input_file : str or Path
@@ -307,6 +333,7 @@ def extract_kaikki_idioms(
             except Exception:
                 continue
 
+            # Convert entry into candidate idiom rows using filtering logic
             #rows = entry_to_rows(entry) 
             rows = entry_to_rows(entry, strict_mode=strict_mode)
 
@@ -336,10 +363,11 @@ def extract_kaikki_idioms(
     return summary
 
 def main():
-
-    # =========================
+    """
+    Entry point for running the Kaikki idiom extraction pipeline.
+    Defines input/output paths and executes the extraction process.
+    """
     # CONFIG input and output dataset
-    # =========================
     
     input_file = KAIKKI_FILE
     output_csv = DATA_PROCESS_DIR / "idioms_wiktionary_kaikki.csv"
