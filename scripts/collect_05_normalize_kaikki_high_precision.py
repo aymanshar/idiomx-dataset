@@ -33,7 +33,7 @@ DATA_PROCESS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Raw dataset file
 INPUT_FILE = DATA_PROCESS_DIR / "idioms_wiktionary_kaikki_high_precision.csv"
-OUTPUT_FILE = DATA_PROCESS_DIR / "idioms_source_kaikki_normalized.csv"
+OUTPUT_FILE = DATA_PROCESS_DIR / "idioms_source_kaikki.csv"
 
 
 def normalize_high_precision_idioms(input_file=INPUT_FILE, output_file=OUTPUT_FILE):

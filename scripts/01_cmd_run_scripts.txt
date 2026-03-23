@@ -9,7 +9,6 @@ conda activate idiomx
 pip install -r scripts/requirements.txt
 
 
-
 python extract_idioms_from_kaikki.py
 
 python collect_02_filter_strict_idioms.py
@@ -26,6 +25,4 @@ python collect_10_merge_wordnet_with_stage3.py
 
 python collect_12_01_filter_global_idioms.py
 
-python collect_12_02_dataset_statistics.py
-
-then continue from the notebook 
+python  finalize_pre_enrichment_dataset.py

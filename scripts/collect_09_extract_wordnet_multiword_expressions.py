@@ -27,7 +27,7 @@ BASE_DIR = Path("..")
 DATA_PROCESS_DIR = BASE_DIR / "data" / "processed"
 DATA_PROCESS_DIR.mkdir(parents=True, exist_ok=True)
 
-OUTPUT_FILE = DATA_PROCESS_DIR / "idioms_source_wordnet_normalized.csv"
+OUTPUT_FILE = DATA_PROCESS_DIR / "idioms_source_wordnet.csv"
 
 
 def ensure_wordnet_downloaded():

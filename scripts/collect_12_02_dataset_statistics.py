@@ -27,6 +27,7 @@ from pathlib import Path
 import pandas as pd
 import json
 import re
+import shutil
 
 # paths
 
@@ -34,10 +35,19 @@ BASE_DIR = Path("..")
 DATA_PROCESS_DIR = BASE_DIR / "data" / "processed"
 DATA_PROCESS_DIR.mkdir(parents=True, exist_ok=True)
 
-INPUT_FILE = DATA_PROCESS_DIR / "idioms_dataset_stage5_high_precision.csv"
-OUTPUT_JSON = DATA_PROCESS_DIR / "idioms_dataset_stage5_statistics.json"
-OUTPUT_CSV = DATA_PROCESS_DIR / "idioms_dataset_stage5_source_distribution.csv"
+INPUT_FILE = DATA_PROCESS_DIR / "idioms_dataset_high_precision.csv"
+OUTPUT_JSON = DATA_PROCESS_DIR / "idiomx_dataset_v1_statistics.json"
+OUTPUT_CSV = DATA_PROCESS_DIR / "idiomx_dataset_v1_source_distribution.csv"
 
+# Save FINAL dataset copies
+# ====================================================
+
+DATA_FINAL_DIR = BASE_DIR / "data" / "final"
+DATA_FINAL_DIR.mkdir(parents=True, exist_ok=True)
+
+FINAL_DATASET = DATA_FINAL_DIR / "idiomx_dataset_v1.csv"
+FINAL_STATS_JSON = DATA_FINAL_DIR / "idiomx_dataset_v1_statistics.json"
+FINAL_STATS_CSV = DATA_FINAL_DIR / "idiomx_dataset_v1_source_distribution.csv"
 
 def norm(x):
     """
@@ -148,7 +158,13 @@ def main():
     stats, source_df = build_dataset_statistics()
     print("\nTop sources preview:")
     print(source_df.head())
-
-
+    # Copy files
+    shutil.copy2(INPUT_FILE, FINAL_DATASET)
+    shutil.copy2(OUTPUT_JSON, FINAL_STATS_JSON)
+    shutil.copy2(OUTPUT_CSV, FINAL_STATS_CSV)
+    print("\nFinal dataset saved to:")
+    print(FINAL_DATASET)
+    print(FINAL_STATS_JSON)
+    print(FINAL_STATS_CSV)
 if __name__ == "__main__":
     main()

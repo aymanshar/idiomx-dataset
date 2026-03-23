@@ -150,7 +150,32 @@ The dataset is built through a multi-stage pipeline:
    - Surface-form validation
 
 ---
+## Run the pipeline using python files (CMD)
+from anaconda CMD
 
+go to root_folder/data_collection/scripts 
+
+```bash
+conda create -n idiomx python=3.11 -y
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate idiomx
+
+pip install -r scripts/requirements.txt
+```
+
+run the python files in the same order
+```bash
+python extract_idioms_from_kaikki.py
+python collect_02_filter_strict_idioms.py
+python collect_03_clean_idioms.py
+python collect_04_build_high_precision_idioms.py
+python collect_05_normalize_kaikki_high_precision.py
+python collect_09_extract_wordnet_multiword_expressions.py
+python collect_10_merge_wordnet_with_stage3.py
+python collect_12_01_filter_global_idioms.py
+python finalize_pre_enrichment_dataset.py
+```
+---
 ## Files
 
 - `idiomx_core.parquet` → main dataset (recommended)
