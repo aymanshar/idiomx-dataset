@@ -171,15 +171,17 @@ python collect_03_clean_idioms.py
 python collect_04_build_high_precision_idioms.py
 python collect_05_normalize_kaikki_high_precision.py
 python collect_09_extract_wordnet_multiword_expressions.py
-python collect_10_merge_wordnet_with_stage3.py
+python collect_10_merge_wordnet_with_kaikki.py
 python collect_12_01_filter_global_idioms.py
 python finalize_pre_enrichment_dataset.py
 ```
 ---
 ## Files
 
-- `idiomx_core.parquet` → main dataset (recommended)
-- `idiomx_core.csv` → CSV version
+- `idiomx_pre_enrichment.parquet` → main dataset (recommended)
+- `idiomx_pre_enrichment.csv → CSV version
+- `idiomx_pre_enrichment_sample.csv`
+- `idiomx_pre_enrichment_sample.parquet`
 - `dataset_statistics.json` → dataset summary statistics
 
 ---
