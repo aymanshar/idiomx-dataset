@@ -33,13 +33,13 @@ DATA_PROCESS_DIR = BASE_DIR / "data" / "processed"
 DATA_PROCESS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Current main dataset after previous merging steps
-DEFAULT_STAGE3_FILE = DATA_PROCESS_DIR / "idioms_dataset_stage3.csv"
+DEFAULT_STAGE3_FILE = DATA_PROCESS_DIR / "idioms_source_kaikki_normalized.csv"
 
 # Newly extracted WordNet normalized dataset
 DEFAULT_WORDNET_FILE = DATA_PROCESS_DIR / "idioms_source_wordnet_normalized.csv"
 
 # Output merged dataset
-DEFAULT_OUTPUT_FILE = DATA_PROCESS_DIR / "idioms_dataset_stage4.csv"
+DEFAULT_OUTPUT_FILE = DATA_PROCESS_DIR / "idioms_dataset_stage.csv"
 
 # Any missing columns will be added automatically to keep
 

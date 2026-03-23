@@ -36,8 +36,8 @@ BASE_DIR = Path("..")
 DATA_PROCESS_DIR = BASE_DIR / "data" / "processed"
 DATA_PROCESS_DIR.mkdir(parents=True, exist_ok=True)
 
-INPUT_FILE = DATA_PROCESS_DIR / "idioms_dataset_stage5.csv"
-OUTPUT_BROAD = DATA_PROCESS_DIR / "idioms_dataset_stage5_broad.csv"
+INPUT_FILE = DATA_PROCESS_DIR / "idioms_dataset_stage.csv"
+OUTPUT_BROAD = DATA_PROCESS_DIR / "idioms_dataset_stage_broad.csv"
 OUTPUT_HIGH = DATA_PROCESS_DIR / "idioms_dataset_stage5_high_precision.csv"
 
 # Heuristic hints used to keep likely idiomatic expressions

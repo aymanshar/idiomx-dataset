@@ -1,0 +1,31 @@
+from anaconda CMD
+
+go to root_folder/data_collection/scripts 
+
+conda create -n idiomx python=3.11 -y
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate idiomx
+
+pip install -r scripts/requirements.txt
+
+
+
+python extract_idioms_from_kaikki.py
+
+python collect_02_filter_strict_idioms.py
+
+python collect_03_clean_idioms.py
+
+python collect_04_build_high_precision_idioms.py
+
+python collect_05_normalize_kaikki_high_precision.py
+
+python collect_09_extract_wordnet_multiword_expressions.py
+
+python collect_10_merge_wordnet_with_stage3.py
+
+python collect_12_01_filter_global_idioms.py
+
+python collect_12_02_dataset_statistics.py
+
+then continue from the notebook 
