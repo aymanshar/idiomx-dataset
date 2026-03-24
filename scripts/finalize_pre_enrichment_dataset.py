@@ -104,6 +104,55 @@ def standardize_source_name(src: str) -> str:
     }
     return mapping.get(src, src)
 
+# Remove intermediate and old pipeline files
+def cleanup_old_files(base_dir: Path):
+    """
+    Remove intermediate and old pipeline files safely.
+    Keeps only required final inputs.
+    """
+
+    patterns_to_delete = [
+        # intermediate datasets
+        "idioms_dataset_*.csv",
+
+        # old batches/results
+        "idiomx_batch*.jsonl",
+        "idiomx_results*.jsonl",
+
+        # old enriched outputs
+        "idiomx_enriched_full*.csv",
+        "idiomx_enriched_full*.parquet",
+
+        # validation outputs
+        "idiomx_enriched_full_validated*.csv",
+        "idiomx_enriched_full_issues*.csv",
+        "idiomx_enriched_full_final*.csv",
+    ]
+
+    protected_files = {
+        "idioms_dataset_high_precision.csv",
+        "idiomx_pre_enrichment.csv",
+        "idiomx_pre_enrichment.parquet",
+        "idiomx_pre_enrichment_sample.csv",
+        "idiomx_pre_enrichment_sample.parquet",
+        "idiomx_pre_enrichment_statistics.json",
+        "idiomx_pre_enrichment_source_distribution.csv",
+    }
+
+    deleted = []
+
+    for pattern in patterns_to_delete:
+        for file in base_dir.rglob(pattern):
+            if file.name not in protected_files and file.exists():
+                try:
+                    print("Would delete:", file)
+                    file.unlink()
+                    deleted.append(str(file))
+                except Exception as e:
+                    print(f"⚠️ Could not delete {file}: {e}")
+
+    print(f"\n🧹 Cleanup completed. Deleted {len(deleted)} files.")
+    return deleted
 
 # ============================================================
 # Main finalization
@@ -117,6 +166,7 @@ def finalize_pre_enrichment_dataset(
     output_parquet: Path = DEFAULT_PRE_ENRICHMENT_PARQUET,
     sample_csv: Path = DEFAULT_SAMPLE_CSV,
     sample_n: int = 500,
+    do_cleanup=True,
 ):
     """
     Finalize the pre-enrichment IdiomX dataset and sample.
@@ -263,6 +313,9 @@ def finalize_pre_enrichment_dataset(
     print("\nPre-enrichment dataset shape:", df_clean.shape)
     print("Sample dataset shape:", df_sample.shape)
 
+    if do_cleanup:
+        cleanup_old_files(BASE_DIR)
+
     return stats, df_source_stats, df_clean, df_sample
 
 
@@ -290,4 +343,6 @@ if __name__ == "__main__":
         output_parquet=Path(args.output_parquet),
         sample_csv=Path(args.sample_csv),
         sample_n=args.sample_n,
+        do_cleanup=True,
+
     )
