@@ -1,0 +1,278 @@
+{
+  "total_rows": 179883,
+  "n_columns": 47,
+  "columns": [
+    "idiom_id",
+    "idiom_canonical",
+    "idiom_surface",
+    "example",
+    "idiom_canonical_meaning",
+    "source",
+    "source_type",
+    "pos",
+    "tags",
+    "idiom_confidence",
+    "source_url",
+    "record_origin",
+    "license_source",
+    "example_language",
+    "meaning_language",
+    "idiom_canonical_meaning_arabic",
+    "is_idiom",
+    "ambiguity_flag",
+    "idiom_compositionality_level",
+    "idiom_register",
+    "idiom_domain",
+    "learner_difficulty",
+    "idiom_in_example",
+    "idiom_in_example_arabic",
+    "idiom_in_example_meaning_en",
+    "idiom_in_example_meaning_arabic",
+    "is_example_idiom",
+    "example_usage_label",
+    "is_generated_example",
+    "enrichment_model",
+    "enrichment_version",
+    "validation_status",
+    "context_type",
+    "source_style",
+    "hard_negative_idioms",
+    "meaning_paraphrases_en",
+    "meaning_paraphrases_ar",
+    "idiom_level_explanation_en",
+    "idiom_level_explanation_ar",
+    "explanation_en",
+    "explanation_ar",
+    "minimal_pair_id",
+    "paraphrase_group_id",
+    "is_adversarial_example",
+    "adversarial_type",
+    "expected_label",
+    "row_type"
+  ],
+  "unique_idioms": 12678,
+  "non_empty_examples": 179883,
+  "non_empty_meaning_en": 179882,
+  "non_empty_meaning_ar": 179882,
+  "non_empty_surface_forms": 154237,
+  "generated_examples_count": 179883,
+  "generated_examples_ratio": 1.0,
+  "validation_status_distribution": {
+    "valid": 173314,
+    "verified": 3882,
+    "corrected": 2687
+  },
+  "correction_rate": 0.014937,
+  "source_distribution": {
+    "kaikki_wiktionary": 179673,
+    "wordnet": 210
+  },
+  "label_distribution": {
+    "literal": 84398,
+    "idiomatic": 81928,
+    "borderline": 13557
+  },
+  "ambiguity_distribution": {
+    "semi_literal_possible": 88359,
+    "strongly_idiomatic": 70342,
+    "ambiguous": 21182
+  },
+  "domain_distribution": {
+    "general": 147921,
+    "business": 8330,
+    "regional": 7812,
+    "politics": 3640,
+    "sports": 3024,
+    "military": 2450,
+    "legal": 2240,
+    "internet": 1932,
+    "religious": 1372,
+    "biblical": 1162
+  },
+  "difficulty_distribution": {
+    "medium": 139029,
+    "hard": 21630,
+    "easy": 19224
+  },
+  "pos_distribution": {
+    "verb": 66983,
+    "noun": 43834,
+    "phrase": 36153,
+    "prep_phrase": 11536,
+    "proverb": 8581,
+    "adj": 7084,
+    "adv": 4522,
+    "prep": 588,
+    "pron": 238,
+    "n": 182,
+    "conj": 140,
+    "v": 28,
+    "adv_phrase": 14
+  },
+  "example_length_char_stats": {
+    "count": 179883,
+    "mean": 72.6919,
+    "std": 23.1129,
+    "min": 4.0,
+    "p25": 63.0,
+    "median": 73.0,
+    "p75": 84.0,
+    "max": 3530.0
+  },
+  "example_length_word_stats": {
+    "count": 179883,
+    "mean": 12.9016,
+    "std": 3.4925,
+    "min": 1.0,
+    "p25": 11.0,
+    "median": 13.0,
+    "p75": 15.0,
+    "max": 319.0
+  },
+  "examples_per_idiom_stats": {
+    "count": 12678,
+    "mean": 14.161,
+    "std": 1.5903,
+    "min": 2.0,
+    "p25": 14.0,
+    "median": 14.0,
+    "p75": 14.0,
+    "max": 56.0
+  },
+  "top_20_idioms_by_examples": [
+    {
+      "idiom": "et al.",
+      "count": 56
+    },
+    {
+      "idiom": "drop in the ocean",
+      "count": 42
+    },
+    {
+      "idiom": "kick the bucket",
+      "count": 42
+    },
+    {
+      "idiom": "on cloud nine",
+      "count": 42
+    },
+    {
+      "idiom": "give up the ghost",
+      "count": 28
+    },
+    {
+      "idiom": "nobody's perfect",
+      "count": 28
+    },
+    {
+      "idiom": "in the twinkling of an eye",
+      "count": 28
+    },
+    {
+      "idiom": "cream of the crop",
+      "count": 28
+    },
+    {
+      "idiom": "tip the scales",
+      "count": 28
+    },
+    {
+      "idiom": "buy the rumor, sell the news",
+      "count": 28
+    },
+    {
+      "idiom": "get wind of",
+      "count": 28
+    },
+    {
+      "idiom": "hem and haw",
+      "count": 28
+    },
+    {
+      "idiom": "and so on",
+      "count": 28
+    },
+    {
+      "idiom": "fall to pieces",
+      "count": 28
+    },
+    {
+      "idiom": "by virtue of",
+      "count": 28
+    },
+    {
+      "idiom": "haste makes waste",
+      "count": 28
+    },
+    {
+      "idiom": "in broad daylight",
+      "count": 28
+    },
+    {
+      "idiom": "refrigerator mother",
+      "count": 28
+    },
+    {
+      "idiom": "rain cats and dogs",
+      "count": 28
+    },
+    {
+      "idiom": "pull strings",
+      "count": 28
+    }
+  ],
+  "missing_summary": {
+    "idiom_canonical": {
+      "missing_count": 350,
+      "missing_ratio": 0.001946
+    },
+    "idiom_in_example": {
+      "missing_count": 0,
+      "missing_ratio": 0.0
+    },
+    "validation_status": {
+      "missing_count": 0,
+      "missing_ratio": 0.0
+    },
+    "is_generated_example": {
+      "missing_count": 0,
+      "missing_ratio": 0.0
+    },
+    "source": {
+      "missing_count": 0,
+      "missing_ratio": 0.0
+    },
+    "idiom_in_example_meaning_en": {
+      "missing_count": 1,
+      "missing_ratio": 6e-06
+    },
+    "idiom_in_example_meaning_arabic": {
+      "missing_count": 1,
+      "missing_ratio": 6e-06
+    },
+    "idiom_surface": {
+      "missing_count": 25646,
+      "missing_ratio": 0.14257
+    },
+    "pos": {
+      "missing_count": 0,
+      "missing_ratio": 0.0
+    },
+    "example_usage_label": {
+      "missing_count": 0,
+      "missing_ratio": 0.0
+    },
+    "ambiguity_flag": {
+      "missing_count": 0,
+      "missing_ratio": 0.0
+    },
+    "idiom_domain": {
+      "missing_count": 0,
+      "missing_ratio": 0.0
+    },
+    "learner_difficulty": {
+      "missing_count": 0,
+      "missing_ratio": 0.0
+    }
+  }
+}

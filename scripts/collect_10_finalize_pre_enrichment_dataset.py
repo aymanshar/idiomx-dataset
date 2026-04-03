@@ -28,7 +28,7 @@ import hashlib
 import argparse
 import pandas as pd
 
-from collect_12_02_dataset_statistics import build_dataset_statistics
+from collect_09_dataset_statistics import build_dataset_statistics
 
 
 # ============================================================

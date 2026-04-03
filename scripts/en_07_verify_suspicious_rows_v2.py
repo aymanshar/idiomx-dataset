@@ -1,38 +1,16 @@
-"""
-IdiomX Dataset Pipeline
-
-Author: Ayman Ali Sharara
-Project: IdiomX – Neural Understanding of English Idioms
-github: https://github.com/aymanshar/idiomx-dataset
-Year: 2026
-
-Description:
-Verify suspicious IdiomX rows using the API (v2).
-
-LLM-based verification and correction stage for the IdiomX dataset.
-This script re-evaluates rows flagged during validation using a structured
-LLM prompt and optionally corrects inconsistencies.
-
-Supports:
-- notebook execution with explicit paths
-- command-line execution
-- sample mode and full mode
-
-WARNING:
-This script calls the API and may incur cost.
-Do not run unless you intentionally want to re-verify flagged rows.
-"""
-
 from pathlib import Path
 import json
 import argparse
 import pandas as pd
 from tqdm import tqdm
+import sys
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
 
 from config.api_config import client
 
-
-BASE_DIR = Path(__file__).resolve().parents[1]
 
 # Full-mode defaults
 DEFAULT_FULL_INPUT_CSV = BASE_DIR / "data" / "enriched" / "idiomx_enriched_full_validated_v2.csv"
@@ -40,6 +18,8 @@ DEFAULT_FULL_OUTPUT_CSV = BASE_DIR / "data" / "enriched" / "idiomx_enriched_full
 DEFAULT_FULL_REVIEW_ROWS_CSV = BASE_DIR / "data" / "enriched" / "idiomx_review_rows_v2.csv"
 DEFAULT_FULL_CORRECTED_ROWS_CSV = BASE_DIR / "data" / "enriched" / "idiomx_corrected_rows_v2.csv"
 DEFAULT_FULL_VERIFICATION_LOG_CSV = BASE_DIR / "data" / "enriched" / "idiomx_verification_log_v2.csv"
+DEFAULT_FULL_CHECKPOINT_CSV = BASE_DIR / "data" / "enriched" / "idiomx_verification_checkpoint_v2.csv"
+DEFAULT_FULL_CHECKPOINT_JSON = BASE_DIR / "data" / "enriched" / "idiomx_verification_checkpoint_v2.json"
 
 # Sample-mode defaults
 DEFAULT_SAMPLE_INPUT_CSV = BASE_DIR / "data" / "sample" / "idiomx_enriched_full_validated_sample_v2.csv"
@@ -47,6 +27,8 @@ DEFAULT_SAMPLE_OUTPUT_CSV = BASE_DIR / "data" / "sample" / "idiomx_enriched_full
 DEFAULT_SAMPLE_REVIEW_ROWS_CSV = BASE_DIR / "data" / "sample" / "idiomx_review_rows_sample_v2.csv"
 DEFAULT_SAMPLE_CORRECTED_ROWS_CSV = BASE_DIR / "data" / "sample" / "idiomx_corrected_rows_sample_v2.csv"
 DEFAULT_SAMPLE_VERIFICATION_LOG_CSV = BASE_DIR / "data" / "sample" / "idiomx_verification_log_sample_v2.csv"
+DEFAULT_SAMPLE_CHECKPOINT_CSV = BASE_DIR / "data" / "sample" / "idiomx_verification_checkpoint_sample_v2.csv"
+DEFAULT_SAMPLE_CHECKPOINT_JSON = BASE_DIR / "data" / "sample" / "idiomx_verification_checkpoint_sample_v2.json"
 
 
 SCHEMA = {
@@ -102,9 +84,6 @@ SCHEMA = {
 
 
 def get_mode_paths(use_sample: bool = False):
-    """
-    Return default input/output paths based on execution mode.
-    """
     if use_sample:
         return (
             DEFAULT_SAMPLE_INPUT_CSV,
@@ -112,6 +91,8 @@ def get_mode_paths(use_sample: bool = False):
             DEFAULT_SAMPLE_REVIEW_ROWS_CSV,
             DEFAULT_SAMPLE_CORRECTED_ROWS_CSV,
             DEFAULT_SAMPLE_VERIFICATION_LOG_CSV,
+            DEFAULT_SAMPLE_CHECKPOINT_CSV,
+            DEFAULT_SAMPLE_CHECKPOINT_JSON,
         )
     return (
         DEFAULT_FULL_INPUT_CSV,
@@ -119,7 +100,57 @@ def get_mode_paths(use_sample: bool = False):
         DEFAULT_FULL_REVIEW_ROWS_CSV,
         DEFAULT_FULL_CORRECTED_ROWS_CSV,
         DEFAULT_FULL_VERIFICATION_LOG_CSV,
+        DEFAULT_FULL_CHECKPOINT_CSV,
+        DEFAULT_FULL_CHECKPOINT_JSON,
     )
+
+
+def save_progress(
+    df: pd.DataFrame,
+    review_df_original: pd.DataFrame,
+    corrected_indices: list,
+    verification_logs: list,
+    output_csv: Path,
+    review_rows_csv: Path,
+    corrected_rows_csv: Path,
+    verification_log_csv: Path,
+    checkpoint_csv: Path,
+    checkpoint_json: Path,
+    last_processed_idx: int,
+):
+    corrected_rows_df = (
+        df.loc[sorted(set(corrected_indices))].copy()
+        if corrected_indices
+        else pd.DataFrame(columns=df.columns)
+    )
+    verification_log_df = pd.DataFrame(verification_logs)
+
+    output_csv.parent.mkdir(parents=True, exist_ok=True)
+    review_rows_csv.parent.mkdir(parents=True, exist_ok=True)
+    corrected_rows_csv.parent.mkdir(parents=True, exist_ok=True)
+    verification_log_csv.parent.mkdir(parents=True, exist_ok=True)
+    checkpoint_csv.parent.mkdir(parents=True, exist_ok=True)
+    checkpoint_json.parent.mkdir(parents=True, exist_ok=True)
+
+    # Save main outputs
+    df.to_csv(output_csv, index=False, encoding="utf-8-sig")
+    review_df_original.to_csv(review_rows_csv, index=False, encoding="utf-8-sig")
+    corrected_rows_df.to_csv(corrected_rows_csv, index=False, encoding="utf-8-sig")
+    verification_log_df.to_csv(verification_log_csv, index=False, encoding="utf-8-sig")
+
+    # Save checkpoint snapshot
+    df.to_csv(checkpoint_csv, index=False, encoding="utf-8-sig")
+    with open(checkpoint_json, "w", encoding="utf-8") as f:
+        json.dump(
+            {
+                "last_processed_idx": int(last_processed_idx),
+                "corrected_indices": list(sorted(set(corrected_indices))),
+                "verification_log_count": len(verification_logs),
+            },
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
 
 
 def verify_suspicious_rows(
@@ -128,23 +159,21 @@ def verify_suspicious_rows(
     review_rows_csv: Path = None,
     corrected_rows_csv: Path = None,
     verification_log_csv: Path = None,
+    checkpoint_csv: Path = None,
+    checkpoint_json: Path = None,
     use_sample: bool = False,
     model_name: str = "gpt-4.1-mini",
+    save_every: int = 25,
+    resume: bool = True,
 ):
-    """
-    Re-verify suspicious rows flagged by the validation stage.
-
-    Returns
-    -------
-    tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]
-        final_df, review_rows_df, corrected_rows_df, verification_log_df
-    """
     (
         default_input_csv,
         default_output_csv,
         default_review_rows_csv,
         default_corrected_rows_csv,
         default_verification_log_csv,
+        default_checkpoint_csv,
+        default_checkpoint_json,
     ) = get_mode_paths(use_sample=use_sample)
 
     input_csv = Path(input_csv) if input_csv is not None else default_input_csv
@@ -152,38 +181,65 @@ def verify_suspicious_rows(
     review_rows_csv = Path(review_rows_csv) if review_rows_csv is not None else default_review_rows_csv
     corrected_rows_csv = Path(corrected_rows_csv) if corrected_rows_csv is not None else default_corrected_rows_csv
     verification_log_csv = Path(verification_log_csv) if verification_log_csv is not None else default_verification_log_csv
+    checkpoint_csv = Path(checkpoint_csv) if checkpoint_csv is not None else default_checkpoint_csv
+    checkpoint_json = Path(checkpoint_json) if checkpoint_json is not None else default_checkpoint_json
 
     if not input_csv.exists():
         raise FileNotFoundError(f"Input CSV not found: {input_csv}")
 
-    df = pd.read_csv(input_csv, low_memory=False)
+    # Resume from checkpoint CSV if available
+    if resume and checkpoint_csv.exists():
+        print(f"[INFO] Resuming from checkpoint CSV: {checkpoint_csv}")
+        df = pd.read_csv(checkpoint_csv, low_memory=False)
+    else:
+        df = pd.read_csv(input_csv, low_memory=False)
 
     if "validation_status" not in df.columns:
         raise ValueError("Input CSV does not contain 'validation_status' column.")
 
     review_df = df[df["validation_status"] == "needs_review"].copy()
     review_df_original = review_df.copy()
-
     print(f"Rows marked for review: {len(review_df)}")
 
     if len(review_df) == 0:
-        output_csv.parent.mkdir(parents=True, exist_ok=True)
-        review_rows_csv.parent.mkdir(parents=True, exist_ok=True)
-        corrected_rows_csv.parent.mkdir(parents=True, exist_ok=True)
-        verification_log_csv.parent.mkdir(parents=True, exist_ok=True)
-
-        df.to_csv(output_csv, index=False, encoding="utf-8-sig")
-        review_df_original.to_csv(review_rows_csv, index=False, encoding="utf-8-sig")
-        pd.DataFrame().to_csv(corrected_rows_csv, index=False, encoding="utf-8-sig")
-        pd.DataFrame().to_csv(verification_log_csv, index=False, encoding="utf-8-sig")
-
+        save_progress(
+            df=df,
+            review_df_original=review_df_original,
+            corrected_indices=[],
+            verification_logs=[],
+            output_csv=output_csv,
+            review_rows_csv=review_rows_csv,
+            corrected_rows_csv=corrected_rows_csv,
+            verification_log_csv=verification_log_csv,
+            checkpoint_csv=checkpoint_csv,
+            checkpoint_json=checkpoint_json,
+            last_processed_idx=-1,
+        )
         print(f"No suspicious rows found. Saved unchanged dataset to: {output_csv}")
-        return df, review_df_original, pd.DataFrame(), pd.DataFrame()
+        return df
 
-    verification_logs = []
     corrected_indices = []
+    verification_logs = []
+    processed_index_set = set()
+
+    # Resume state
+    if resume and checkpoint_json.exists():
+        print(f"[INFO] Loading checkpoint state: {checkpoint_json}")
+        with open(checkpoint_json, "r", encoding="utf-8") as f:
+            state = json.load(f)
+        corrected_indices = state.get("corrected_indices", [])
+        processed_index_set = set(
+            pd.read_csv(verification_log_csv, low_memory=False)["row_index"].tolist()
+        ) if verification_log_csv.exists() else set()
+        if verification_log_csv.exists():
+            verification_logs = pd.read_csv(verification_log_csv, low_memory=False).to_dict("records")
+
+    processed_counter = 0
 
     for idx, row in tqdm(review_df.iterrows(), total=len(review_df), desc="Verifying suspicious rows"):
+        if idx in processed_index_set:
+            continue
+
         row_type = str(row.get("row_type", "")).strip()
         is_adv = str(row.get("is_adversarial_example", "")).strip()
 
@@ -259,7 +315,6 @@ expected_label: {row.get('expected_label', '')}
             )
 
             obj = json.loads(response.output_text)
-
             before_status = df.loc[idx, "validation_status"]
 
             if obj["is_valid"]:
@@ -339,18 +394,38 @@ expected_label: {row.get('expected_label', '')}
                 "after_expected_label": before_snapshot["expected_label"],
             })
 
-    corrected_rows_df = df.loc[sorted(set(corrected_indices))].copy() if corrected_indices else pd.DataFrame(columns=df.columns)
-    verification_log_df = pd.DataFrame(verification_logs)
+        processed_index_set.add(idx)
+        processed_counter += 1
 
-    output_csv.parent.mkdir(parents=True, exist_ok=True)
-    review_rows_csv.parent.mkdir(parents=True, exist_ok=True)
-    corrected_rows_csv.parent.mkdir(parents=True, exist_ok=True)
-    verification_log_csv.parent.mkdir(parents=True, exist_ok=True)
+        if processed_counter % save_every == 0:
+            print(f"\n[INFO] Saving checkpoint after {processed_counter} newly processed rows...")
+            save_progress(
+                df=df,
+                review_df_original=review_df_original,
+                corrected_indices=corrected_indices,
+                verification_logs=verification_logs,
+                output_csv=output_csv,
+                review_rows_csv=review_rows_csv,
+                corrected_rows_csv=corrected_rows_csv,
+                verification_log_csv=verification_log_csv,
+                checkpoint_csv=checkpoint_csv,
+                checkpoint_json=checkpoint_json,
+                last_processed_idx=idx,
+            )
 
-    df.to_csv(output_csv, index=False, encoding="utf-8-sig")
-    review_df_original.to_csv(review_rows_csv, index=False, encoding="utf-8-sig")
-    corrected_rows_df.to_csv(corrected_rows_csv, index=False, encoding="utf-8-sig")
-    verification_log_df.to_csv(verification_log_csv, index=False, encoding="utf-8-sig")
+    save_progress(
+        df=df,
+        review_df_original=review_df_original,
+        corrected_indices=corrected_indices,
+        verification_logs=verification_logs,
+        output_csv=output_csv,
+        review_rows_csv=review_rows_csv,
+        corrected_rows_csv=corrected_rows_csv,
+        verification_log_csv=verification_log_csv,
+        checkpoint_csv=checkpoint_csv,
+        checkpoint_json=checkpoint_json,
+        last_processed_idx=-1,
+    )
 
     print(f"Saved final verified dataset to: {output_csv}")
     print(f"Saved review rows to: {review_rows_csv}")
@@ -363,21 +438,22 @@ expected_label: {row.get('expected_label', '')}
     corrected_ratio = (df["validation_status"] == "corrected").mean()
     print(f"Correction rate: {corrected_ratio:.2%}")
 
-    return df, review_df_original, corrected_rows_df, verification_log_df
+    return df
 
 
 def parse_args():
-    """
-    Parse command-line arguments for LLM-based verification of suspicious rows.
-    """
-    parser = argparse.ArgumentParser(description="Verify suspicious IdiomX rows v2.")
+    parser = argparse.ArgumentParser(description="Verify suspicious IdiomX rows v2 with checkpointing.")
     parser.add_argument("--sample", action="store_true", help="Use sample-mode default paths.")
     parser.add_argument("--input-csv", type=str, default=None, help="Path to input validated CSV.")
     parser.add_argument("--output-csv", type=str, default=None, help="Path to output final CSV.")
     parser.add_argument("--review-rows-csv", type=str, default=None, help="Path to save rows marked for review.")
     parser.add_argument("--corrected-rows-csv", type=str, default=None, help="Path to save corrected rows only.")
     parser.add_argument("--verification-log-csv", type=str, default=None, help="Path to save verification log.")
+    parser.add_argument("--checkpoint-csv", type=str, default=None, help="Path to save checkpoint CSV.")
+    parser.add_argument("--checkpoint-json", type=str, default=None, help="Path to save checkpoint JSON.")
     parser.add_argument("--model", type=str, default="gpt-4.1-mini", help="Model name to use for verification.")
+    parser.add_argument("--save-every", type=int, default=25, help="Save progress every N processed rows.")
+    parser.add_argument("--no-resume", action="store_true", help="Disable resume from checkpoint.")
     return parser.parse_args()
 
 
@@ -390,6 +466,10 @@ if __name__ == "__main__":
         review_rows_csv=Path(args.review_rows_csv) if args.review_rows_csv else None,
         corrected_rows_csv=Path(args.corrected_rows_csv) if args.corrected_rows_csv else None,
         verification_log_csv=Path(args.verification_log_csv) if args.verification_log_csv else None,
+        checkpoint_csv=Path(args.checkpoint_csv) if args.checkpoint_csv else None,
+        checkpoint_json=Path(args.checkpoint_json) if args.checkpoint_json else None,
         use_sample=args.sample,
         model_name=args.model,
+        save_every=args.save_every,
+        resume=not args.no_resume,
     )

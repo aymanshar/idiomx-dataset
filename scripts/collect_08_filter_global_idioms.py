@@ -364,7 +364,7 @@ def filter_global_idioms(
     output_high.parent.mkdir(parents=True, exist_ok=True)
 
     # Read and normalize input
-    df = pd.read_csv(input_file, encoding="utf-8-sig")
+    df = pd.read_csv(input_file, encoding="utf-8-sig", low_memory=False)
     df = normalize_dataframe(df)
 
     # Build broad dataset to retain wider idiom coverage (higher recall)
