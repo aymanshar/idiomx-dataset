@@ -1,6 +1,5 @@
 # IdiomX: English–Arabic Idiom Understanding Dataset
-
-## IdiomX  
+  
 ---
 
 [![Hugging Face](https://img.shields.io/badge/HuggingFace-Dataset-yellow?logo=huggingface)](https://huggingface.co/datasets/aymansharara/IdiomX)
@@ -35,31 +34,45 @@ Supervised by Prof. Hanna Abi Akl
 
 ## Overview
 
+This repository contains the **official IdiomX dataset pipeline and final release used in the associated research paper**.
+
 **IdiomX** is a large-scale, high-quality bilingual dataset designed for **idiomatic expression understanding**, including detection, interpretation, and cross-lingual analysis.
 
 The dataset contains **over 123,000 contextualized examples** derived from approximately **15,000 English idioms**, enriched with semantic annotations and **English–Arabic translations**.
 
-To the best of our knowledge, **IdiomX is the largest publicly available bilingual idiom dataset** with contextualized examples and semantic consistency validation.
+To the best of our knowledge, **IdiomX is the largest publicly available bilingual idiom dataset** that provides:
+- Contextualized idiomatic and literal usage examples  
+- Semantic consistency validation  
+- High-coverage bilingual (English–Arabic) annotations  
+
+The dataset is constructed through a multi-stage pipeline combining **lexical resources and LLM-based enrichment**, followed by rigorous validation and quality control.
 
 --- 
 
-## Note on Example Fields
+## Dataset Schema (Important)
 
-The `example` column preserves examples as collected from the original source data and may contain missing values.
+The dataset contains two versions of contextual examples:
 
-For modeling and analysis, the recommended contextual field is `idiom_in_example`, which provides the enriched example text used throughout the IdiomX pipeline.
+- `example_raw` → Original sentence collected from source data (may contain noise or missing values)
+- `example` → Cleaned, normalized, and model-ready contextual sentence (recommended for all modeling tasks)
 
+👉 **Important:**  
+All experiments, training, and evaluation should use the `example` column.
+
+This design ensures:
+- Full traceability to original data (`example_raw`)
+- Clean input for machine learning (`example`)
 ---
 
 ## Dataset Statistics
 
 | Metric | Value |
-|------|------|
+|--------|------|
 | Total examples | 123,336 |
 | Unique idioms | 14,986 |
 | Avg examples per idiom | 8.2 |
 | Arabic coverage | 99.99% |
-| Label balance | 50/50 |
+| Label balance | 50% idiomatic / 50% literal |
 
 ---
 
@@ -88,8 +101,10 @@ flowchart LR
 
 ## Languages
 
-- English en  
-- Arabic ar  
+- English (en)
+- Arabic (ar)
+
+The dataset provides full bilingual coverage, including idiomatic meanings and contextual usage in both languages.
 
 ---
 
@@ -97,16 +112,33 @@ flowchart LR
 
 Each record includes:
 
+### Core Fields
+- `idiom_id`
 - `idiom_canonical`
 - `idiom_surface`
-- `idiom_in_example`
-- `idiom_in_example_meaning_en`
-- `idiom_in_example_meaning_arabic`
+
+### Contextual Example
+- `example` → cleaned, normalized, model-ready sentence
+- `example_raw` → original source sentence
+- `example_usage_label` → idiomatic / literal
+
+### Meaning & Interpretation
 - `idiom_canonical_meaning`
 - `idiom_canonical_meaning_arabic`
-- `example_usage_label` (idiomatic / literal)
-- `semantic_consistency`
-- Additional linguistic features
+- `idiom_in_example_meaning_en`
+- `idiom_in_example_meaning_arabic`
+
+### Quality & Validation
+- `semantic_similarity_example_vs_meaning`
+- `semantic_quality`
+- `is_generated_example`
+- `is_adversarial_example`
+
+### Metadata
+- `source`
+- `source_type`
+- `language`
+- additional linguistic and enrichment features
 
 ---
 
@@ -116,44 +148,64 @@ This dataset is constructed from **high-quality lexical resources only**:
 
 - **Wiktionary**
 - **WordNet**
-- **Enrichment by Generated Example and more informative fields using GPT LLM**
+- **LLM-based enrichment (context generation, semantic validation, bilingual translation)**
 
 All other sources were excluded to ensure consistency and reliability.
 
 ---
 
 ## License
-- MIT. License
+- MIT License
 - CC BY-SA 4.0 (Wiktionary-derived)
 - WordNet License
 
 ---
+
 ## Dataset Construction
 
 The dataset is built through a multi-stage pipeline:
 
-1. **Data Collection**
-   - Extract idioms from Wiktionary and WordNet
-
-2. **Preprocessing**
-   - Cleaning, normalization, deduplication
-
-3. **LLM Enrichment**
-   - Generate contextual examples
-   - Generate English and Arabic meanings
-   - Generate translations
-
-4. **Validation**
-   - Missing value analysis
-   - Label consistency checks (>99.98%)
-   - Semantic consistency scoring
-   - Surface-form validation
+1. Data collection from Wiktionary and WordNet  
+2. Cleaning, normalization, and deduplication  
+3. LLM-based enrichment (examples, meanings, translations)  
+4. Validation (semantic consistency, label accuracy, quality checks)
 
 ---
+
+## Reproducibility
+
+The dataset can be fully reproduced using the provided pipeline notebooks and scripts.
+
+A sample pre-enrichment dataset is also included to allow quick testing and validation without running the full pipeline.
+
+The pipeline is designed to remain functional with or without LLM enrichment, ensuring reproducibility across different environments.
+---
+
+## Pipeline Notebooks
+
+The dataset is built using the following notebooks:
+
+1. `01_data_collection.ipynb`
+2. `02_data_enrichment_pipeline.ipynb`
+3. `03_finalize_idiomx_dataset.ipynb`
+
+These notebooks correspond to:
+
+| Step | Description |
+|------|------------|
+| 01 | Data extraction and preprocessing |
+| 02 | LLM enrichment and semantic augmentation |
+| 03 | Final cleaning, splitting, and dataset export |
+
+The final published dataset is produced in Step 03 (`03_finalize_idiomx_dataset.ipynb`).
+
+---
+
 ## Run the pipeline using python files (CMD)
 from anaconda CMD
 
-go to root_folder/data_collection/scripts 
+Navigate to:
+data_collection/scripts/
 
 ```bash
 conda create -n idiomx python=3.11 -y
@@ -165,24 +217,43 @@ pip install -r scripts/requirements.txt
 
 run the python files in the same order
 ```bash
-python extract_idioms_from_kaikki.py
+python collect_01_extract_idioms_from_kaikki.py
 python collect_02_filter_strict_idioms.py
 python collect_03_clean_idioms.py
 python collect_04_build_high_precision_idioms.py
 python collect_05_normalize_kaikki_high_precision.py
-python collect_09_extract_wordnet_multiword_expressions.py
-python collect_10_merge_wordnet_with_kaikki.py
-python collect_12_01_filter_global_idioms.py
-python finalize_pre_enrichment_dataset.py
+python collect_06_extract_wordnet_multiword_expressions.py
+python collect_07_merge_wordnet_with_kaikki.py
+python collect_08_filter_global_idioms.py
+python collect_09_finalize_pre_enrichment_dataset.py
+python collect_10_dataset_statistics.py
 ```
 ---
 ## Files
 
-- `idiomx_pre_enrichment.parquet` → main dataset (recommended)
-- `idiomx_pre_enrichment.csv → CSV version
-- `idiomx_pre_enrichment_sample.csv`
+### Main Dataset (Final)
+
+- `idiomx_full.parquet`
+- `idiomx_balanced.parquet`
+- `idiomx_high_quality.parquet`
+
+### Train/Test Splits
+
+- `idiomx_train.parquet`
+- `idiomx_test.parquet`
+- `idiomx_balanced_train.parquet`
+- `idiomx_balanced_test.parquet`
+- `idiomx_high_quality_train.parquet`
+- `idiomx_high_quality_test.parquet`
+
+### Pre-Enrichment (Intermediate)
+
+- `idiomx_pre_enrichment.parquet`
 - `idiomx_pre_enrichment_sample.parquet`
-- `dataset_statistics.json` → dataset summary statistics
+
+### Metadata
+
+- `dataset_statistics.json`
 
 ---
 
