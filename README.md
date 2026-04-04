@@ -56,7 +56,7 @@ The dataset contains two versions of contextual examples:
 - `example_raw` → Original sentence collected from source data (may contain noise or missing values)
 - `example` → Cleaned, normalized, and model-ready contextual sentence (recommended for all modeling tasks)
 
-👉 **Important:**  
+**Important:**  
 All experiments, training, and evaluation should use the `example` column.
 
 This design ensures:
@@ -290,7 +290,7 @@ IdiomX supports a wide range of NLP tasks:
 
 The full dataset paper is available here:
 
- `docs/IdiomX_Dataset_Paper_v1.pdf`
+ `docs/IdiomX_Dataset_Paper_v6.pdf`
 
 ---
 
