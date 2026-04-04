@@ -407,9 +407,11 @@ def get_mode_paths(use_sample: bool = False):
     return DEFAULT_FULL_INPUT_FILE, DEFAULT_FULL_OUTPUT_JSONL
 
 def prepare_batch_requests(
-    input_file: Path = None,
-    output_jsonl: Path = None,
-    use_sample: bool = False,
+    input_file,
+    output_jsonl,
+    use_sample=False,
+    sample_size=10,
+    sample_method="random",
 ):
     """
     Convert the input dataset into JSONL batch requests for the LLM API.
@@ -425,8 +427,22 @@ def prepare_batch_requests(
     if not input_file.exists():
         raise FileNotFoundError(f"Input dataset not found: {input_file}")
 
-    df = pd.read_parquet(input_file)
+    if input_file.suffix.lower() == ".parquet":
+        df = pd.read_parquet(input_file)
+    elif input_file.suffix.lower() == ".csv":
+        df = pd.read_csv(input_file, low_memory=False)
+    else:
+        raise ValueError(f"Unsupported input format: {input_file}")
 
+    # Apply real sample mode here
+    if use_sample:
+        if sample_method == "head":
+            df = df.head(sample_size).copy()
+        elif sample_method == "random":
+            df = df.sample(min(sample_size, len(df)), random_state=42).copy()
+        else:
+            raise ValueError(f"Unsupported sample_method: {sample_method}")
+        
     if df.empty:
         raise ValueError(f"Input dataset is empty: {input_file}")
 

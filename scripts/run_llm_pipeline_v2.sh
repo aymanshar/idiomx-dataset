@@ -19,22 +19,25 @@ echo "Running LLM enrichment pipeline"
 echo "======================================"
 
 echo "Step 1: Preparing batch requests"
-python scripts/prepare_enrichment_batch_requests.py
+python scripts/en_01_prepare_enrichment_batch_requests_v2.py
 
 echo "Step 2: Submitting batch job"
-python scripts/submit_batch.py
+python scripts/en_02_submit_batch_v2.py
 
-echo "Step 3: Downloading batch results"
-python scripts/download_existing_batch_results.py
+echo "Step 3: check existing batch status"
+python scripts/en_03_check_existing_batch_v2.py
 
-echo "Step 4: Merging outputs"
-python scripts/merge_batch_results_to_enriched_dataset.py
+echo "Step 4: Downloading batch results"
+python scripts/en_04_download_existing_batch_results_v2.py
 
-echo "Step 5: Running validation"
-python scripts/validate_dataset.py
+echo "Step 5: Merging outputs"
+python scripts/en_05_merge_batch_results_to_enriched_dataset_v2.py
 
-echo "Step 6: Verifying suspicious rows"
-python scripts/verify_suspicious_rows.py
+echo "Step 6: Running validation"
+python scripts/en_06_validate_dataset_v2.py
+
+echo "Step 7: Verifying suspicious rows"
+python scripts/en_07_verify_suspicious_rows_v2.py
 
 echo "======================================"
 echo "Pipeline completed successfully"

@@ -202,6 +202,17 @@ def verify_suspicious_rows(
     print(f"Rows marked for review: {len(review_df)}")
 
     if len(review_df) == 0:
+        empty_corrected_df = pd.DataFrame(columns=df.columns)
+        empty_log_df = pd.DataFrame(columns=[
+            "row_index",
+            "idiom_id",
+            "row_type",
+            "before_validation_status",
+            "after_validation_status",
+            "changed",
+            "notes",
+        ])
+
         save_progress(
             df=df,
             review_df_original=review_df_original,
@@ -215,8 +226,9 @@ def verify_suspicious_rows(
             checkpoint_json=checkpoint_json,
             last_processed_idx=-1,
         )
+
         print(f"No suspicious rows found. Saved unchanged dataset to: {output_csv}")
-        return df
+        return df, review_df_original, empty_corrected_df, empty_log_df
 
     corrected_indices = []
     verification_logs = []
@@ -438,7 +450,7 @@ expected_label: {row.get('expected_label', '')}
     corrected_ratio = (df["validation_status"] == "corrected").mean()
     print(f"Correction rate: {corrected_ratio:.2%}")
 
-    return df
+    return df, review_df_original, empty_corrected_df, empty_log_df
 
 
 def parse_args():

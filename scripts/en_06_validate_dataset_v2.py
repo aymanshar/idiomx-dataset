@@ -114,7 +114,7 @@ def bool_is_false(value) -> bool:
 
 
 def validate_dataset(
-    input_csv: Path = None,
+    input_file : Path = None,
     output_validated_csv: Path = None,
     output_issues_csv: Path = None,
     use_sample: bool = False,
@@ -129,14 +129,19 @@ def validate_dataset(
     """
     default_input_csv, default_output_validated_csv, default_output_issues_csv = get_mode_paths(use_sample=use_sample)
 
-    input_csv = Path(input_csv) if input_csv is not None else default_input_csv
+    input_file  = Path(input_file ) if input_file  is not None else default_input_csv
     output_validated_csv = Path(output_validated_csv) if output_validated_csv is not None else default_output_validated_csv
     output_issues_csv = Path(output_issues_csv) if output_issues_csv is not None else default_output_issues_csv
 
-    if not input_csv.exists():
-        raise FileNotFoundError(f"Input CSV not found: {input_csv}")
+    if not input_file .exists():
+        raise FileNotFoundError(f"Input CSV not found: {input_file }")
 
-    df = pd.read_csv(input_csv, low_memory=False)
+    if input_file.suffix.lower() == ".parquet":
+        df = pd.read_parquet(input_file)
+    elif input_file.suffix.lower() == ".csv":
+        df = pd.read_csv(input_file, low_memory=False)
+    else:
+        raise ValueError(f"Unsupported input format: {input_file}")
 
     statuses = []
     issues = []
@@ -392,7 +397,7 @@ if __name__ == "__main__":
     args = parse_args()
 
     validate_dataset(
-        input_csv=Path(args.input_csv) if args.input_csv else None,
+        input_csv=Path(args.input_file ) if args.input_file  else None,
         output_validated_csv=Path(args.output_validated_csv) if args.output_validated_csv else None,
         output_issues_csv=Path(args.output_issues_csv) if args.output_issues_csv else None,
         use_sample=args.sample,
