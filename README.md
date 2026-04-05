@@ -68,9 +68,9 @@ This design ensures:
 
 | Metric | Value |
 |--------|------|
-| Total examples | 123,336 |
-| Unique idioms | 14,986 |
-| Avg examples per idiom | 8.2 |
+| Total examples | 124,441 |
+| Unique idioms | 8,889 |
+| Avg examples per idiom | 14 |
 | Arabic coverage | 99.99% |
 | Label balance | 50% idiomatic / 50% literal |
 
