@@ -6,7 +6,7 @@
 [![Kaggle](https://img.shields.io/badge/Kaggle-Dataset-blue?logo=kaggle)](https://www.kaggle.com/datasets/aymansharara/idiomx)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.19137833-blue)](https://doi.org/10.5281/zenodo.19137833)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Dataset Size](https://img.shields.io/badge/Examples-123K+-informational)]()
+[![Dataset Size](https://img.shields.io/badge/Examples-179K+-informational)]()
 [![Languages](https://img.shields.io/badge/Languages-EN%20%7C%20AR-blue)]()
 [![Tasks](https://img.shields.io/badge/Tasks-NLP%20%7C%20Translation%20%7C%20Classification-purple)]()
 [![Status](https://img.shields.io/badge/Status-Active%20Research-orange)]()
@@ -38,7 +38,7 @@ This repository contains the **official IdiomX dataset pipeline and final releas
 
 **IdiomX** is a large-scale, high-quality bilingual dataset designed for **idiomatic expression understanding**, including detection, interpretation, and cross-lingual analysis.
 
-The dataset contains **over 123,000 contextualized examples** derived from approximately **15,000 English idioms**, enriched with semantic annotations and **English–Arabic translations**.
+The dataset contains **179,833 contextualized examples** covering **12,853 English idioms**, enriched with semantic annotations and **English–Arabic translations**.
 
 To the best of our knowledge, **IdiomX is the largest publicly available bilingual idiom dataset** that provides:
 - Contextualized idiomatic and literal usage examples  
@@ -68,11 +68,47 @@ This design ensures:
 
 | Metric | Value |
 |--------|------|
-| Total examples | 124,441 |
-| Unique idioms | 8,889 |
-| Avg examples per idiom | 14 |
-| Arabic coverage | 99.99% |
-| Label balance | 50% idiomatic / 50% literal |
+| Total examples | 179,833 |
+| Unique idioms | 12,853 |
+| Unique normalized examples | 173,033 |
+| Avg examples per idiom | 13.99 |
+| Reuse factor | 1.04 |
+| Idiomatic examples | 81,905 (45.55%) |
+| Literal examples | 84,374 (46.92%) |
+| Borderline examples | 13,554 (7.54%) |
+| Binary dataset size | 166,279 |
+| High-quality examples | 138,699 (77.13%) |
+| Medium-or-higher quality | 96.10% |
+| Low-quality examples | 3.90% |
+| Language | English (with Arabic semantic fields) |
+
+---
+
+## Key Insights
+
+- **High lexical diversity**
+  - 173,033 unique normalized sentences across 179,833 rows  
+  - Reuse factor ≈ 1.04 → minimal duplication  
+
+- **Balanced contextual usage**
+  - Idiomatic and literal examples are nearly evenly distributed  
+  - Avoids bias in classification tasks  
+
+- **High semantic quality**
+  - 77% high-quality examples  
+  - 96% medium-or-higher quality  
+  - Only ~4% low-quality examples  
+
+- **Controlled ambiguity**
+  - Borderline cases (~7.5%) simulate real-world uncertainty  
+
+- **Rich linguistic annotations**
+  - compositionality (transparent → opaque)  
+  - register (formal, informal, slang, etc.)  
+  - learner difficulty  
+  - semantic similarity scores  
+
+These properties make IdiomX a **robust benchmark for contextual idiom understanding**, requiring models to rely on semantic reasoning rather than surface patterns.
 
 ---
 
@@ -101,10 +137,11 @@ flowchart LR
 
 ## Languages
 
-- English (en)
-- Arabic (ar)
+- Example language: English  
+- Meaning language: English  
+- Additional fields: Arabic translations and semantic annotations  
 
-The dataset provides full bilingual coverage, including idiomatic meanings and contextual usage in both languages.
+This design supports both **monolingual semantic modeling** and **cross-lingual research (EN ↔ AR)**.
 
 ---
 
@@ -120,7 +157,7 @@ Each record includes:
 ### Contextual Example
 - `example` → cleaned, normalized, model-ready sentence
 - `example_raw` → original source sentence
-- `example_usage_label` → idiomatic / literal
+- `example_usage_label` → idiomatic / literal / borderline
 
 ### Meaning & Interpretation
 - `idiom_canonical_meaning`
@@ -229,6 +266,22 @@ python collect_09_finalize_pre_enrichment_dataset.py
 python collect_10_dataset_statistics.py
 ```
 ---
+
+## Dataset Variants
+
+IdiomX is released in multiple variants to support different research needs:
+
+- **Full dataset:** 179,833 examples  
+- **Binary dataset:** 166,279 examples (idiomatic vs literal)  
+- **High-quality dataset:** 138,699 examples  
+
+These variants allow flexible usage for:
+- benchmarking
+- controlled experiments
+- high-precision modeling
+
+---
+
 ## Files
 
 ### Main Dataset (Final)
@@ -262,6 +315,7 @@ python collect_10_dataset_statistics.py
 IdiomX supports a wide range of NLP tasks:
 
 - Idiom detection (idiomatic vs literal classification)
+- Contextual idiom understanding under ambiguity
 - Idiom interpretation and meaning retrieval
 - Context-to-idiom generation
 - Cross-lingual idiom translation
