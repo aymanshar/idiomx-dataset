@@ -38,7 +38,7 @@ This repository contains the **official IdiomX dataset pipeline and final releas
 
 **IdiomX** is a large-scale, high-quality bilingual dataset designed for **idiomatic expression understanding**, including detection, interpretation, and cross-lingual analysis.
 
-The dataset contains **179,833 contextualized examples** covering **12,853 English idioms**, enriched with semantic annotations and **English–Arabic translations**.
+The dataset contains **174,956 contextualized examples** covering **12,823 English idioms**, enriched with semantic annotations and **English–Arabic translations**.
 
 To the best of our knowledge, **IdiomX is the largest publicly available bilingual idiom dataset** that provides:
 - Contextualized idiomatic and literal usage examples  
@@ -68,9 +68,9 @@ This design ensures:
 
 | Metric | Value |
 |--------|------|
-| Total examples | 179,833 |
-| Unique idioms | 12,853 |
-| Unique normalized examples | 173,033 |
+| Total examples | 174,956 |
+| Unique idioms | 12,823 |
+| Unique normalized examples | 172,481 |
 | Avg examples per idiom | 13.99 |
 | Reuse factor | 1.04 |
 | Idiomatic examples | 81,905 (45.55%) |
@@ -87,7 +87,7 @@ This design ensures:
 ## Key Insights
 
 - **High lexical diversity**
-  - 173,033 unique normalized sentences across 179,833 rows  
+  - 173,033 unique normalized sentences across 174,956 rows  
   - Reuse factor ≈ 1.04 → minimal duplication  
 
 - **Balanced contextual usage**
@@ -271,9 +271,9 @@ python collect_10_dataset_statistics.py
 
 IdiomX is released in multiple variants to support different research needs:
 
-- **Full dataset:** 179,833 examples  
-- **Binary dataset:** 166,279 examples (idiomatic vs literal)  
-- **High-quality dataset:** 138,699 examples  
+- **Full dataset:** 174,956 examples  
+- **Binary dataset:** 162,744 examples (idiomatic vs literal)  
+- **High-quality dataset:** 123,022 examples  
 
 These variants allow flexible usage for:
 - benchmarking
