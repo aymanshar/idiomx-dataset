@@ -70,16 +70,13 @@ This design ensures:
 |--------|------|
 | Total examples | 174,956 |
 | Unique idioms | 12,823 |
-| Unique normalized examples | 172,481 |
-| Avg examples per idiom | 13.99 |
-| Reuse factor | 1.04 |
-| Idiomatic examples | 81,905 (45.55%) |
-| Literal examples | 84,374 (46.92%) |
-| Borderline examples | 13,554 (7.54%) |
-| Binary dataset size | 166,279 |
-| High-quality examples | 138,699 (77.13%) |
-| Medium-or-higher quality | 96.10% |
-| Low-quality examples | 3.90% |
+| Unique normalized examples | 172,393 |
+| Avg examples per idiom | 13.64 |
+| Reuse factor | 1.01 |
+| Idiomatic examples | 80,483 (46.00%) |
+| Literal examples | 81,004 (46.30%) |
+| Borderline examples | 13,469 (7.70%) |
+| High-quality examples | 123,022|
 | Language | English (with Arabic semantic fields) |
 
 ---
@@ -87,17 +84,14 @@ This design ensures:
 ## Key Insights
 
 - **High lexical diversity**
-  - 173,033 unique normalized sentences across 174,956 rows  
+  - 172,393 unique normalized sentences across 174,956 rows  
   - Reuse factor ≈ 1.04 → minimal duplication  
 
 - **Balanced contextual usage**
   - Idiomatic and literal examples are nearly evenly distributed  
   - Avoids bias in classification tasks  
 
-- **High semantic quality**
-  - 77% high-quality examples  
-  - 96% medium-or-higher quality  
-  - Only ~4% low-quality examples  
+- **123,022 High semantic quality examples ** 
 
 - **Controlled ambiguity**
   - Borderline cases (~7.5%) simulate real-world uncertainty  
@@ -272,7 +266,6 @@ python collect_10_dataset_statistics.py
 IdiomX is released in multiple variants to support different research needs:
 
 - **Full dataset:** 174,956 examples  
-- **Binary dataset:** 162,744 examples (idiomatic vs literal)  
 - **High-quality dataset:** 123,022 examples  
 
 These variants allow flexible usage for:
