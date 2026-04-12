@@ -36,6 +36,45 @@ Supervised by Prof. Hanna Abi Akl
 
 This repository contains the **official IdiomX dataset pipeline and final release used in the associated research paper**.
 
+But to understand IdiomX, let’s start with a simple idea:
+
+People often use expressions like  
+“break the ice” or “spill the beans”  
+
+These sentences don’t mean what the words say.  
+They carry hidden meanings, and we call them **idioms**.
+
+Humans understand this naturally.  
+Computers and AI systems often do not.
+
+For example, a system might interpret:  
+“spill the beans” as something related to food  
+while in reality it means **revealing a secret**  
+
+---
+
+### Why IdiomX?
+
+Modern AI systems are very good at processing words,  
+but they still struggle with **context and hidden meaning**.
+
+This creates real problems in:
+- translation systems  
+- chatbots and assistants  
+- language understanding tasks  
+
+**IdiomX is designed to address this gap.**
+
+It provides a large-scale, high-quality dataset that helps machines:
+- understand idiomatic expressions  
+- distinguish between literal and figurative meaning  
+- learn from real contextual examples  
+- connect meaning across languages (English ↔ Arabic)  
+
+---
+
+### What is IdiomX?
+
 **IdiomX** is a large-scale, high-quality bilingual dataset designed for **idiomatic expression understanding**, including detection, interpretation, and cross-lingual analysis.
 
 The dataset contains **174,956 contextualized examples** covering **12,823 English idioms**, enriched with semantic annotations and **English–Arabic translations**.
@@ -47,7 +86,7 @@ To the best of our knowledge, **IdiomX is the largest publicly available bilingu
 
 The dataset is constructed through a multi-stage pipeline combining **lexical resources and LLM-based enrichment**, followed by rigorous validation and quality control.
 
---- 
+---
 
 ## Dataset Schema (Important)
 
