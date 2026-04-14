@@ -87,6 +87,48 @@ To the best of our knowledge, **IdiomX is the largest publicly available bilingu
 The dataset is constructed through a multi-stage pipeline combining **lexical resources and LLM-based enrichment**, followed by rigorous validation and quality control.
 
 ---
+### Modern Idioms & Slang Pipeline
+
+A separate pipeline has been introduced to expand IdiomX with **modern expressions and slang**, including:
+
+Sources:
+- Urban Dictionary
+- Wiktionary slang entries
+- OpenSubtitles (dialogue-based expressions)
+
+Pipeline steps:
+1. Extraction from multiple sources
+2. Cleaning and normalization
+3. Merging and deduplication (idiom-level strict dedup)
+4. High-precision filtering
+5. LLM-based enrichment (examples, meanings, translations)
+6. Schema alignment with IdiomX
+7. Final merge preparation
+
+This pipeline ensures:
+- Coverage of real-world modern language
+- Compatibility with the main IdiomX dataset
+
+---
+
+### Data Format
+
+The final dataset is stored in **Parquet format** for efficiency and scalability:
+
+- `idiomx_v3_with_similarity.parquet`
+
+Additionally:
+
+- Dataset is split into:
+  - Train set
+  - Test set
+
+This ensures:
+- Reproducibility
+- Benchmark consistency
+- Direct usability in ML pipelines
+
+---
 
 ## Dataset Schema (Important)
 
@@ -166,6 +208,29 @@ flowchart LR
     G --> H[Parquet / CSV Release]
     H --> I[HuggingFace / Kaggle / GitHub]
 ```
+
+### ⚙️ Pipeline Structure
+
+The dataset is built through a modular pipeline:
+
+#### Core Idiom Pipeline
+- collect_01 → collect_10 → finalize_pre_enrichment
+- LLM enrichment (batch pipeline)
+- validation + merging + final statistics
+
+#### Modern Idioms Pipeline (NEW)
+- collect_modern_01 → collect_modern_13
+- modern LLM enrichment
+- schema alignment
+- merge-ready output
+
+#### Final Steps
+- Feature engineering (similarity, length, quality)
+- Dataset validation
+- Train/test split
+- Parquet export
+
+
 ---
 
 ## Languages
@@ -182,15 +247,47 @@ This design supports both **monolingual semantic modeling** and **cross-lingual 
 
 Each record includes:
 
+### Derived Features
+
+The dataset includes several computed features to support modeling and analysis:
+
+| Feature | Description |
+|--------|------------|
+| sentence_length_chars | Number of characters in the example |
+| sentence_length_words | Number of words in the example |
+| semantic_similarity_example_vs_meaning | Embedding similarity between example and idiom meaning |
+| semantic_quality | Quality label derived from similarity score (high / medium / low) |
+
+### Multilingual Extension (NEW)
+
+The dataset has been extended beyond English–Arabic to include **French semantic alignment**.
+
+New fields include:
+
+| Column | Description |
+|--------|------------|
+| idiom_canonical_meaning_french | French translation of idiom meaning |
+| idiom_in_example_meaning_french | French contextual meaning |
+
+This enables:
+- Cross-lingual retrieval (EN ↔ AR ↔ FR)
+- Multilingual semantic modeling
+- Future expansion to additional languages
+
 ### Core Fields
 - `idiom_id`
 - `idiom_canonical`
 - `idiom_surface`
 
-### Contextual Example
-- `example` → cleaned, normalized, model-ready sentence
-- `example_raw` → original source sentence
-- `example_usage_label` → idiomatic / literal / borderline
+### Core Text Fields
+
+| Column | Description |
+|------|-------------|
+| idiom_canonical | Canonical idiom form |
+| example | Main contextual sentence (LLM-generated, idiomatic or literal usage) |
+| example_raw | Original source sentence collected from datasets (reference only) |
+| example_normalized | Cleaned and normalized version of `example` |
+| example_language | Language of the example |
 
 ### Meaning & Interpretation
 - `idiom_canonical_meaning`
@@ -244,11 +341,13 @@ The dataset is built through a multi-stage pipeline:
 
 ## Reproducibility
 
-The dataset can be fully reproduced using the provided pipeline notebooks and scripts.
+All dataset construction steps are fully reproducible via:
 
-A sample pre-enrichment dataset is also included to allow quick testing and validation without running the full pipeline.
+- Python scripts (modular pipeline)
+- Batch LLM enrichment
+- Deterministic processing stages
 
-The pipeline is designed to remain functional with or without LLM enrichment, ensuring reproducibility across different environments.
+Final outputs can be regenerated from raw sources using the provided scripts.
 ---
 
 ## Pipeline Notebooks
