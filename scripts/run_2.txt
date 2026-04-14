@@ -1,0 +1,28 @@
+
+
+python -m scripts.en_modern_01_prepare_enrichment_batch_requests_v1 --sample --sample-size 2 --sample-method random --output-jsonl "data/sample/idiomx_modern_batch_sample_v1_rerun.jsonl"
+
+
+
+python -m scripts.en_02_submit_batch_v2 --sample --batch-file "data/sample/idiomx_modern_batch_sample_v1_rerun.jsonl" --batch-info-file "data/sample/idiomx_modern_batch_sample_info_v1_rerun.json" --stage-name "idiomx_modern_pre_llm_to_enriched_sample_v1_rerun"
+
+
+python -m scripts.en_03_check_existing_batch_v2 --batch-info-file "data/sample/idiomx_modern_batch_sample_info_v1_rerun.json"
+
+
+
+python -m scripts.en_04_download_existing_batch_results_v2 --batch-info-file "data/sample/idiomx_modern_batch_sample_info_v1_rerun.json" --output-path "data/sample/idiomx_results_sample_v2_rerun.jsonl"
+
+
+
+
+
+python -m scripts.en_modern_01_prepare_enrichment_batch_requests_v1
+
+python -m scripts.en_02_submit_batch_v2 --batch-file "data/batches/idiomx_modern_batch_v1.jsonl" --batch-info-file "data/batches/idiomx_modern_batch_info_v1.json" --stage-name "idiomx_modern_pre_llm_to_enriched_full_v1"
+
+
+
+python -m scripts.en_03_check_existing_batch_v2 --batch-info-file "data/batches/idiomx_modern_batch_info_v1.json"
+
+python -m scripts.en_04_download_existing_batch_results_v2 --batch-info-file "data/batches/idiomx_modern_batch_info_v1.json" --output-path "data/results/idiomx_modern_results_v1.jsonl"

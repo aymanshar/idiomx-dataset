@@ -37,11 +37,12 @@ from pathlib import Path
 import json
 from typing import Optional
 import argparse
-
+import sys
 from config.api_config import client
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
+sys.path.append(str(BASE_DIR))
 
 # Full-mode defaults
 DEFAULT_FULL_BATCH_FILE = BASE_DIR / "data" / "batches" / "idiomx_batch_v2.jsonl"
