@@ -1,28 +1,68 @@
+cd Documents\IdiomX\github_idiomX 
+
+idiomx_env\Scripts\activate
 
 
+############################
+# test enrich the modern idioms after collection 
+############################
 python -m scripts.en_modern_01_prepare_enrichment_batch_requests_v1 --sample --sample-size 2 --sample-method random --output-jsonl "data/sample/idiomx_modern_batch_sample_v1_rerun.jsonl"
 
+python -m scripts.en_modern_02_submit_batch_v1 --sample --batch-file "data/sample/idiomx_modern_batch_sample_v1_rerun.jsonl" --batch-info-file "data/sample/idiomx_modern_batch_sample_info_v1_rerun.json" --stage-name "idiomx_modern_pre_llm_to_enriched_sample_v1_rerun"
+
+python -m scripts.en_modern_03_check_existing_batch_v1 --batch-info-file "data/sample/idiomx_modern_batch_sample_info_v1_rerun.json"
+
+python -m scripts.en_modern_04_download_existing_batch_results_v1 --batch-info-file "data/sample/idiomx_modern_batch_sample_info_v1_rerun.json" --output-path "data/sample/idiomx_results_sample_v2_rerun.jsonl"
 
 
-python -m scripts.en_02_submit_batch_v2 --sample --batch-file "data/sample/idiomx_modern_batch_sample_v1_rerun.jsonl" --batch-info-file "data/sample/idiomx_modern_batch_sample_info_v1_rerun.json" --stage-name "idiomx_modern_pre_llm_to_enriched_sample_v1_rerun"
-
-
-python -m scripts.en_03_check_existing_batch_v2 --batch-info-file "data/sample/idiomx_modern_batch_sample_info_v1_rerun.json"
-
-
-
-python -m scripts.en_04_download_existing_batch_results_v2 --batch-info-file "data/sample/idiomx_modern_batch_sample_info_v1_rerun.json" --output-path "data/sample/idiomx_results_sample_v2_rerun.jsonl"
-
-
-
-
-
+############################
+# enrich the modern idioms after collection 
+############################
 python -m scripts.en_modern_01_prepare_enrichment_batch_requests_v1
+python -m scripts.en_modern_02_submit_batch_v1
+python -m scripts.en_modern_03_check_existing_batch_v1
+python -m scripts.en_modern_04_download_existing_batch_results_v1
+python -m scripts.en_modern_05_parse_modern_batch_results_v1
+python -m scripts.en_modern_06_flatten_modern_enriched_results_v1
+python -m scripts.en_modern_07_filter_valid_modern_idioms_v1
+python -m scripts.en_modern_08_finalize_for_merge_v1
+python -m scripts.en_modern_09_align_to_idiomx_final_schema_v1
+python -m scripts.en_modern_09_validate_dataset_v1
+python -m scripts.en_modern_10_finalize_for_merge_v1
+python -m scripts.en_modern_11_align_schema_for_merge_v1
 
-python -m scripts.en_02_submit_batch_v2 --batch-file "data/batches/idiomx_modern_batch_v1.jsonl" --batch-info-file "data/batches/idiomx_modern_batch_info_v1.json" --stage-name "idiomx_modern_pre_llm_to_enriched_full_v1"
+###################
+# Generate idiome list dataset
+###################
+# do the full from 1 to 6 minimum 4 times
+python -m scripts.synthetic_01_prepare_missing_idiom_generation_requests_v1 --candidates-per-category 300
+python -m scripts.synthetic_02_submit_batch_v1
+python -m scripts.synthetic_03_check_batch_v1
 
+# only if you sumit many times and you want to check
+python -m scripts.synthetic_03b_list_batches_v1
 
+# only if you want to cancel a submitted patch
+python -m scripts.synthetic_cancel_batch
 
-python -m scripts.en_03_check_existing_batch_v2 --batch-info-file "data/batches/idiomx_modern_batch_info_v1.json"
+python -m scripts.synthetic_04_download_batch_results_v1
+python -m scripts.synthetic_05_parse_clean_deduplicate_v1
+python -m scripts.synthetic_06_merge_and_update_blacklist_v1
 
-python -m scripts.en_04_download_existing_batch_results_v2 --batch-info-file "data/batches/idiomx_modern_batch_info_v1.json" --output-path "data/results/idiomx_modern_results_v1.jsonl"
+# prepare the final csv file for LLM enrichement
+python -m scripts.synthetic_07_prepare_for_enrichment_v1
+
+##############
+gpt enrichement:
+############
+python scripts\en_synth_01_prepare_enrichment_batch_requests_v1.py --sample
+
+python -m scripts.en_synth_02_submit_batch_v1 --sample
+python -m scripts.en_synth_03_check_existing_batch_v1
+python -m scripts.en_synth_04_download_existing_batch_results_v1
+python -m scripts.en_synth_05_parse_synth_batch_results_v1
+python -m scripts.en_synth_06_flatten_synth_enriched_results_v1
+python -m scripts.en_synth_07_filter_valid_synth_idioms_v1
+python -m scripts.en_synth_08_finalize_for_merge_v1
+python -m scripts.en_synth_09_validate_dataset_v1
+

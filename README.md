@@ -1,4 +1,4 @@
-# IdiomX: English–Arabic Idiom Understanding Dataset
+# IdiomX: Multilingual Idiom Understanding Dataset (EN–AR–FR)
   
 ---
 
@@ -6,7 +6,7 @@
 [![Kaggle](https://img.shields.io/badge/Kaggle-Dataset-blue?logo=kaggle)](https://www.kaggle.com/datasets/aymansharara/idiomx)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.19137833-blue)](https://doi.org/10.5281/zenodo.19137833)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Dataset Size](https://img.shields.io/badge/Examples-179K+-informational)]()
+[![Dataset Size](https://img.shields.io/badge/Examples-196K+-informational)]()
 [![Languages](https://img.shields.io/badge/Languages-EN%20%7C%20AR-blue)]()
 [![Tasks](https://img.shields.io/badge/Tasks-NLP%20%7C%20Translation%20%7C%20Classification-purple)]()
 [![Status](https://img.shields.io/badge/Status-Active%20Research-orange)]()
@@ -34,308 +34,333 @@ Supervised by Prof. Hanna Abi Akl
 
 ## Overview
 
-This repository contains the **official IdiomX dataset pipeline and final release used in the associated research paper**.
+**IdiomX** is a large-scale **multilingual dataset** for **idiomatic expression understanding in context**.
 
-But to understand IdiomX, let’s start with a simple idea:
+It is designed to support multiple NLP tasks, including:
 
-People often use expressions like  
-“break the ice” or “spill the beans”  
+- Idiom Detection (idiomatic vs. literal)
+- Context → Idiom Retrieval (English)
+- Arabic → English Idiom Retrieval
+- Multilingual semantic understanding (EN–AR–FR)
 
-These sentences don’t mean what the words say.  
-They carry hidden meanings, and we call them **idioms**.
+Idioms are difficult for NLP systems because their meanings are often **non-compositional**. Expressions such as *“spill the beans”* or *“kick the bucket”* cannot be understood correctly from individual words alone. IdiomX is designed to help models learn this distinction from rich contextual examples.
 
-Humans understand this naturally.  
-Computers and AI systems often do not.
-
-For example, a system might interpret:  
-“spill the beans” as something related to food  
-while in reality it means **revealing a secret**  
+> This repository contains the full data collection and enrichment pipeline. 
+> For the dataset only, see Hugging Face.
 
 ---
 
-### Why IdiomX?
+## Why IdiomX Matters
 
-Modern AI systems are very good at processing words,  
-but they still struggle with **context and hidden meaning**.
+Idiomatic language remains one of the most challenging phenomena for NLP systems, even with modern large language models.
 
-This creates real problems in:
-- translation systems  
-- chatbots and assistants  
-- language understanding tasks  
+IdiomX provides:
+- large-scale contextual supervision
+- controlled semantic variation
+- cross-lingual alignment
 
-**IdiomX is designed to address this gap.**
-
-It provides a large-scale, high-quality dataset that helps machines:
-- understand idiomatic expressions  
-- distinguish between literal and figurative meaning  
-- learn from real contextual examples  
-- connect meaning across languages (English ↔ Arabic)  
+This makes it a strong benchmark for evaluating real language understanding beyond surface-level text modeling.
 
 ---
 
-### What is IdiomX?
+## Dataset Scale
 
-**IdiomX** is a large-scale, high-quality bilingual dataset designed for **idiomatic expression understanding**, including detection, interpretation, and cross-lingual analysis.
-
-The dataset contains **174,956 contextualized examples** covering **12,823 English idioms**, enriched with semantic annotations and **English–Arabic translations**.
-
-To the best of our knowledge, **IdiomX is the largest publicly available bilingual idiom dataset** that provides:
-- Contextualized idiomatic and literal usage examples  
-- Semantic consistency validation  
-- High-coverage bilingual (English–Arabic) annotations  
-
-The dataset is constructed through a multi-stage pipeline combining **lexical resources and LLM-based enrichment**, followed by rigorous validation and quality control.
-
----
-### Modern Idioms & Slang Pipeline
-
-A separate pipeline has been introduced to expand IdiomX with **modern expressions and slang**, including:
-
-Sources:
-- Urban Dictionary
-- Wiktionary slang entries
-- OpenSubtitles (dialogue-based expressions)
-
-Pipeline steps:
-1. Extraction from multiple sources
-2. Cleaning and normalization
-3. Merging and deduplication (idiom-level strict dedup)
-4. High-precision filtering
-5. LLM-based enrichment (examples, meanings, translations)
-6. Schema alignment with IdiomX
-7. Final merge preparation
-
-This pipeline ensures:
-- Coverage of real-world modern language
-- Compatibility with the main IdiomX dataset
+- ~196K contextualized examples
+- ~12K+ unique idioms
+- ~172K unique sentences
+- ~14 examples per idiom
+- Balanced labels (idiomatic / literal / borderline)
+- Multilingual semantic alignment (EN–AR–FR)
 
 ---
 
-### Data Format
+## Key Features
 
-The final dataset is stored in **Parquet format** for efficiency and scalability:
+- High semantic quality (validated pipeline)
+- Balanced idiomatic vs literal examples
+- Low duplication (reuse factor ≈ 1.04)
+- Adversarial / hard-negative examples
+- Multilingual alignment (EN–AR–FR)
+- Modern idioms and slang coverage
+- Synthetic expansion for missing idioms
+- Fully reproducible pipeline
 
-- `idiomx_v3_with_similarity.parquet`
-
-Additionally:
-
-- Dataset is split into:
-  - Train set
-  - Test set
-
-This ensures:
-- Reproducibility
-- Benchmark consistency
-- Direct usability in ML pipelines
 
 ---
 
-## Dataset Schema (Important)
+## Data Construction Pipeline
 
-The dataset contains two versions of contextual examples:
+IdiomX is built through **three modular pipelines**:
 
-- `example_raw` → Original sentence collected from source data (may contain noise or missing values)
-- `example` → Cleaned, normalized, and model-ready contextual sentence (recommended for all modeling tasks)
+1. **Core Idiom Pipeline**
+2. **Modern Idioms & Slang Pipeline**
+3. **Synthetic Idiom Generation Pipeline**
 
-**Important:**  
-All experiments, training, and evaluation should use the `example` column.
+These pipelines are modular and reproducible, and together produce the final unified dataset.
 
-This design ensures:
-- Full traceability to original data (`example_raw`)
-- Clean input for machine learning (`example`)
+### Pipeline 1 — Core Idioms
+
+- Extract idioms from Wiktionary (Kaikki) and WordNet  
+- Normalize and deduplicate  
+- Apply strict idiom filtering  
+- Generate contextual examples using LLMs  
+- Perform semantic validation  
+
+#### Core collection steps
+
+```bash
+python -m scripts.collect_01_extract_idioms_from_kaikki
+python -m scripts.collect_02_filter_strict_idioms
+python -m scripts.collect_03_clean_idioms
+python -m scripts.collect_04_build_high_precision_idioms
+python -m scripts.collect_05_normalize_kaikki_high_precision
+python -m scripts.collect_06_extract_wordnet_multiword_expressions
+python -m scripts.collect_07_merge_wordnet_with_kaikki
+python -m scripts.collect_08_filter_global_idioms
+python -m scripts.collect_09_finalize_pre_enrichment_dataset
+python -m scripts.collect_10_dataset_statistics
+```
+
+#### Description
+
+* Extract idioms from Wiktionary (Kaikki) and WordNet
+* Apply strict filtering
+* Normalize canonical forms
+* Merge sources
+* Produce high-quality pre-enrichment dataset
+
+
+#### Core enrichment steps
+
+```bash 
+python -m scripts.en_01_prepare_enrichment_batch_requests_v2
+python -m scripts.en_02_submit_batch_v2
+python -m scripts.en_03_check_existing_batch_v2
+python -m scripts.en_04_download_existing_batch_results
+python -m scripts.en_05_merge_batch_results_to_enriched_dataset_v2
+python -m scripts.en_06_validate_dataset_v2
+python -m scripts.en_07_verify_suspicious_rows_v2
+python -m scripts.en_08_final_dataset_statistics_v2
+```
+
+---
+
+### Pipeline 2 — Modern Idioms & Slang
+
+- Sources: Urban Dictionary, Wiktionary slang, OpenSubtitles  
+- Clean noisy user-generated content  
+- Deduplicate at idiom level  
+- Align to IdiomX schema  
+- LLM enrichment and validation  
+
+#### Modern Data Collection steps
+
+```bash 
+python -m scripts.collect_modern_01_extract_urban_dictionary_slang
+python -m scripts.collect_modern_02_clean_urban_dictionary_source
+python -m scripts.collect_modern_03_extract_wiktionary_slang
+python -m scripts.collect_modern_04_clean_wiktionary_slang
+python -m scripts.collect_modern_05_merge_sources_stage1_urban_wiktionary
+python -m scripts.collect_modern_06_download_opensubtitles_source
+python -m scripts.collect_modern_07_extract_opensubtitles_slang_candidates
+python -m scripts.collect_modern_08_clean_opensubtitles_slang_candidates
+python -m scripts.collect_modern_09_merge_sources_stage2_add_opensubtitles
+python -m scripts.collect_modern_10_filter_global_modern_idioms
+python -m scripts.collect_modern_11_finalize_modern_pre_enrichment_dataset
+python -m scripts.collect_modern_12_compare_modern_with_main_idiomx
+python -m scripts.collect_modern_13_dedup_modern_by_idiom_only_pre_llm
+```
+
+#### Modern LLM Enrichment
+
+```bash 
+python -m scripts.en_modern_01_prepare_enrichment_batch_requests_v1
+python -m scripts.en_modern_02_submit_batch_v1
+python -m scripts.en_modern_03_check_existing_batch_v1
+python -m scripts.en_modern_04_download_existing_batch_results_v1
+python -m scripts.en_modern_05_parse_modern_batch_results_v1
+python -m scripts.en_modern_06_flatten_modern_enriched_results_v1
+python -m scripts.en_modern_07_filter_valid_modern_idioms_v1
+python -m scripts.en_modern_08_finalize_for_merge_v1
+python -m scripts.en_modern_09_align_to_idiomx_final_schema_v1
+python -m scripts.en_modern_09_validate_dataset_v1
+python -m scripts.en_modern_10_finalize_for_merge_v1
+python -m scripts.en_modern_11_align_schema_for_merge_v1
+```
+---
+### Pipeline 3 — Synthetic Idiom Generation
+
+- Generate missing idioms using LLMs  
+- Deduplicate and filter weak candidates  
+- Maintain blacklist of invalid patterns  
+- Enrich and validate generated idioms  
+
+#### Synthetic generation steps
+```bash 
+python -m scripts.synthetic_01_prepare_missing_idiom_generation_requests_v1 --candidates-per-category 300
+python -m scripts.synthetic_02_submit_batch_v1
+python -m scripts.synthetic_03_check_batch_v1
+python -m scripts.synthetic_03b_list_batches_v1
+python -m scripts.synthetic_cancel_batch
+python -m scripts.synthetic_04_download_batch_results_v1
+python -m scripts.synthetic_05_parse_clean_deduplicate_v1
+python -m scripts.synthetic_06_merge_and_update_blacklist_v1
+python -m scripts.synthetic_07_prepare_for_enrichment_v1
+```
+
+#### Synthetic enrichment steps
+
+```bash 
+python -m scripts.en_synth_01_prepare_enrichment_batch_requests_v1
+python -m scripts.en_synth_02_submit_batch_v1
+python -m scripts.en_synth_03_check_existing_batch_v1
+python -m scripts.en_synth_04_download_existing_batch_results_v1
+python -m scripts.en_synth_05_parse_synth_batch_results_v1
+python -m scripts.en_synth_06_flatten_synth_enriched_results_v1
+python -m scripts.en_synth_07_filter_valid_synth_idioms_v1
+python -m scripts.en_synth_08_finalize_for_merge_v1
+python -m scripts.en_synth_09_validate_dataset_v1
+```
+
+---
+## Pipeline Notebooks
+
+The dataset workflow is also documented in notebooks:
+
+1. `01_data_collection.ipynb`
+2. `02_data_enrichment_pipeline.ipynb`
+3. `03_finalize_idiomx_dataset.ipynb`
+
+These correspond to:
+
+| Step | Description |
+| --- | --- |
+| 01 | Data extraction and preprocessing |
+| 02 | LLM enrichment and semantic augmentation |
+| 03 | Final cleaning, validation, and dataset export |
+
+---
+
+## Environment Setup
+
+```bash
+
+conda create -n idiomx python=3.11 -y
+conda activate idiomx
+pip install -r scripts/requirements.txt
+
+```
+---
+
+## Final Dataset
+
+All pipelines are merged into:
+
+```
+idiomx_full.parquet
+```
+---
+
+## Dataset Schema
+
+Each row represents a **contextualized idiom usage example**.
+
+### Core Fields
+- `idiom_id`
+- `idiom_canonical`
+- `example`
+- `example_usage_label`
+- `is_example_idiom`
+
+### Semantics
+- `idiom_canonical_meaning`
+- `idiom_in_example_meaning_en`
+- `idiom_in_example_meaning_arabic`
+- `idiom_in_example_meaning_french`
+
+### Quality
+- `semantic_similarity_example_vs_meaning`
+- `semantic_quality`
+
+### Metadata
+- `source`
+- `source_type`
+- `idiom_domain`
+- `idiom_register`
+- `compositionality`
+- `learner_difficulty`
+
+---
+
+### Derived Features
+
+| Feature | Description |
+|--------|------------|
+| sentence_length_chars | Number of characters |
+| sentence_length_words | Number of words |
+| semantic_similarity_example_vs_meaning | Embedding similarity |
+| semantic_quality | High / Medium / Low |
+
 ---
 
 ## Dataset Statistics
 
 | Metric | Value |
 |--------|------|
-| Total examples | 174,956 |
-| Unique idioms | 12,823 |
-| Unique normalized examples | 172,393 |
-| Avg examples per idiom | 13.64 |
-| Reuse factor | 1.01 |
-| Idiomatic examples | 80,483 (46.00%) |
-| Literal examples | 81,004 (46.30%) |
-| Borderline examples | 13,469 (7.70%) |
-| High-quality examples | 123,022|
-| Language | English (with Arabic semantic fields) |
-
----
-
-## Key Insights
-
-- **High lexical diversity**
-  - 172,393 unique normalized sentences across 174,956 rows  
-  - Reuse factor ≈ 1.04 → minimal duplication  
-
-- **Balanced contextual usage**
-  - Idiomatic and literal examples are nearly evenly distributed  
-  - Avoids bias in classification tasks  
-
-- **123,022 High semantic quality examples ** 
-
-- **Controlled ambiguity**
-  - Borderline cases (~7.5%) simulate real-world uncertainty  
-
-- **Rich linguistic annotations**
-  - compositionality (transparent → opaque)  
-  - register (formal, informal, slang, etc.)  
-  - learner difficulty  
-  - semantic similarity scores  
-
-These properties make IdiomX a **robust benchmark for contextual idiom understanding**, requiring models to rely on semantic reasoning rather than surface patterns.
-
----
-
-## IdiomX Pipeline
-
-```mermaid
-flowchart LR
-    A[Wiktionary + WordNet] --> B[Data Extraction]
-    B --> C[Cleaning & Normalization]
-    C --> D[Deduplication]
-
-    D --> E[LLM Enrichment]
-    E --> E1[Generate Examples]
-    E --> E2[English Meanings]
-    E --> E3[Arabic Translation]
-
-    E --> F[Validation]
-    F --> F1[Semantic Consistency]
-    F --> F2[Label Validation]
-
-    F --> G[Final Dataset]
-    G --> H[Parquet / CSV Release]
-    H --> I[HuggingFace / Kaggle / GitHub]
-```
-
-### ⚙️ Pipeline Structure
-
-The dataset is built through a modular pipeline:
-
-#### Core Idiom Pipeline
-- collect_01 → collect_10 → finalize_pre_enrichment
-- LLM enrichment (batch pipeline)
-- validation + merging + final statistics
-
-#### Modern Idioms Pipeline (NEW)
-- collect_modern_01 → collect_modern_13
-- modern LLM enrichment
-- schema alignment
-- merge-ready output
-
-#### Final Steps
-- Feature engineering (similarity, length, quality)
-- Dataset validation
-- Train/test split
-- Parquet export
-
-
----
-
-## Languages
-
-- Example language: English  
-- Meaning language: English  
-- Additional fields: Arabic translations and semantic annotations  
-
-This design supports both **monolingual semantic modeling** and **cross-lingual research (EN ↔ AR)**.
-
----
-
-## Features
-
-Each record includes:
-
-### Derived Features
-
-The dataset includes several computed features to support modeling and analysis:
-
-| Feature | Description |
-|--------|------------|
-| sentence_length_chars | Number of characters in the example |
-| sentence_length_words | Number of words in the example |
-| semantic_similarity_example_vs_meaning | Embedding similarity between example and idiom meaning |
-| semantic_quality | Quality label derived from similarity score (high / medium / low) |
-
-### Multilingual Extension (NEW)
-
-The dataset has been extended beyond English–Arabic to include **French semantic alignment**.
-
-New fields include:
-
-| Column | Description |
-|--------|------------|
-| idiom_canonical_meaning_french | French translation of idiom meaning |
-| idiom_in_example_meaning_french | French contextual meaning |
-
-This enables:
-- Cross-lingual retrieval (EN ↔ AR ↔ FR)
-- Multilingual semantic modeling
-- Future expansion to additional languages
-
-### Core Fields
-- `idiom_id`
-- `idiom_canonical`
-- `idiom_surface`
-
-### Core Text Fields
-
-| Column | Description |
-|------|-------------|
-| idiom_canonical | Canonical idiom form |
-| example | Main contextual sentence (LLM-generated, idiomatic or literal usage) |
-| example_raw | Original source sentence collected from datasets (reference only) |
-| example_normalized | Cleaned and normalized version of `example` |
-| example_language | Language of the example |
-
-### Meaning & Interpretation
-- `idiom_canonical_meaning`
-- `idiom_canonical_meaning_arabic`
-- `idiom_in_example_meaning_en`
-- `idiom_in_example_meaning_arabic`
-
-### Quality & Validation
-- `semantic_similarity_example_vs_meaning`
-- `semantic_quality`
-- `is_generated_example`
-- `is_adversarial_example`
-
-### Metadata
-- `source`
-- `source_type`
-- `language`
-- additional linguistic and enrichment features
+| Total examples | ~196K |
+| Unique idioms | ~12K+ |
+| Unique sentences | ~190K |
+| Avg examples per idiom | ~14 |
+| Reuse factor | ~1.04 |
+| Idiomatic examples | ~45–48% |
+| Literal examples | ~45–48% |
+| Borderline examples | ~5–8% |
+| High-quality subset | ~123K |
+| Languages | EN / AR / FR |
 
 ---
 
 ## Data Sources
 
-This dataset is constructed from **high-quality lexical resources only**:
+- Wiktionary (Kaikki)
+- WordNet
+- Urban Dictionary
+- OpenSubtitles
+- LLM-based enrichment
 
-- **Wiktionary**
-- **WordNet**
-- **LLM-based enrichment (context generation, semantic validation, bilingual translation)**
+All data undergo strict filtering and validation.
 
-All other sources were excluded to ensure consistency and reliability.
+---
+
+## Use Cases
+
+IdiomX supports a wide range of NLP tasks:
+
+* idiom detection
+* contextual idiom understanding
+* idiom retrieval
+* cross-lingual semantic retrieval
+* multilingual semantic modeling
+* machine translation evaluation
+* LLM fine-tuning
+* semantic search
+
+---
+
+## Limitations
+
+* Some examples are LLM-generated
+* Minor annotation noise may still exist
+* Idiomatic interpretation may vary across contexts
+* Some multilingual fields may be more complete than others depending on source and enrichment stage
 
 ---
 
 ## License
+
 - MIT License
 - CC BY-SA 4.0 (Wiktionary-derived)
 - WordNet License
-
----
-
-## Dataset Construction
-
-The dataset is built through a multi-stage pipeline:
-
-1. Data collection from Wiktionary and WordNet  
-2. Cleaning, normalization, and deduplication  
-3. LLM-based enrichment (examples, meanings, translations)  
-4. Validation (semantic consistency, label accuracy, quality checks)
 
 ---
 
@@ -348,118 +373,6 @@ All dataset construction steps are fully reproducible via:
 - Deterministic processing stages
 
 Final outputs can be regenerated from raw sources using the provided scripts.
----
-
-## Pipeline Notebooks
-
-The dataset is built using the following notebooks:
-
-1. `01_data_collection.ipynb`
-2. `02_data_enrichment_pipeline.ipynb`
-3. `03_finalize_idiomx_dataset.ipynb`
-
-These notebooks correspond to:
-
-| Step | Description |
-|------|------------|
-| 01 | Data extraction and preprocessing |
-| 02 | LLM enrichment and semantic augmentation |
-| 03 | Final cleaning, splitting, and dataset export |
-
-The final published dataset is produced in Step 03 (`03_finalize_idiomx_dataset.ipynb`).
-
----
-
-## Run the pipeline using python files (CMD)
-from anaconda CMD
-
-Navigate to:
-data_collection/scripts/
-
-```bash
-conda create -n idiomx python=3.11 -y
-source $(conda info --base)/etc/profile.d/conda.sh
-conda activate idiomx
-
-pip install -r scripts/requirements.txt
-```
-
-run the python files in the same order
-```bash
-python collect_01_extract_idioms_from_kaikki.py
-python collect_02_filter_strict_idioms.py
-python collect_03_clean_idioms.py
-python collect_04_build_high_precision_idioms.py
-python collect_05_normalize_kaikki_high_precision.py
-python collect_06_extract_wordnet_multiword_expressions.py
-python collect_07_merge_wordnet_with_kaikki.py
-python collect_08_filter_global_idioms.py
-python collect_09_finalize_pre_enrichment_dataset.py
-python collect_10_dataset_statistics.py
-```
----
-
-## Dataset Variants
-
-IdiomX is released in multiple variants to support different research needs:
-
-- **Full dataset:** 174,956 examples  
-- **High-quality dataset:** 123,022 examples  
-
-These variants allow flexible usage for:
-- benchmarking
-- controlled experiments
-- high-precision modeling
-
----
-
-## Files
-
-### Main Dataset (Final)
-
-- `idiomx_full.parquet`
-- `idiomx_balanced.parquet`
-- `idiomx_high_quality.parquet`
-
-### Train/Test Splits
-
-- `idiomx_train.parquet`
-- `idiomx_test.parquet`
-- `idiomx_balanced_train.parquet`
-- `idiomx_balanced_test.parquet`
-- `idiomx_high_quality_train.parquet`
-- `idiomx_high_quality_test.parquet`
-
-### Pre-Enrichment (Intermediate)
-
-- `idiomx_pre_enrichment.parquet`
-- `idiomx_pre_enrichment_sample.parquet`
-
-### Metadata
-
-- `dataset_statistics.json`
-
----
-
-## Use Cases
-
-IdiomX supports a wide range of NLP tasks:
-
-- Idiom detection (idiomatic vs literal classification)
-- Contextual idiom understanding under ambiguity
-- Idiom interpretation and meaning retrieval
-- Context-to-idiom generation
-- Cross-lingual idiom translation
-- Multilingual semantic understanding
-
----
-
-## Limitations
-
-- Some examples are generated using LLMs
-- Minor annotation noise may exist (<0.01%)
-- Idiomatic interpretation may vary across contexts
-
 ---
 
 ## Links
@@ -475,7 +388,7 @@ IdiomX supports a wide range of NLP tasks:
 
 The full dataset paper is available here:
 
- `docs/IdiomX_Dataset_Paper_v6.pdf`
+ `docs/IdiomX_Dataset_Paper_v7.pdf`
 
 ---
 
