@@ -230,6 +230,9 @@ The dataset workflow is also documented in notebooks:
 1. `01_data_collection.ipynb`
 2. `02_data_enrichment_pipeline.ipynb`
 3. `03_finalize_idiomx_dataset.ipynb`
+4. `04_finalize_idiomx_modern_dataset_v1.ipynb`
+5. `05_merge_idiomX_and_modern_idiom.ipynb`
+6. `06_merge_idiomX_modern_and_synth.ipynb`
 
 These correspond to:
 
@@ -238,6 +241,9 @@ These correspond to:
 | 01 | Data extraction and preprocessing |
 | 02 | LLM enrichment and semantic augmentation |
 | 03 | Final cleaning, validation, and dataset export |
+| 04 | finalize idiomx modern dataset v1 |
+| 05 | merge idiomX and modern |
+| 06 | final merge idiomX main, modern and synth |
 
 ---
 
