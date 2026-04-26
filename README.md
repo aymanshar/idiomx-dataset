@@ -65,7 +65,7 @@ Idioms are difficult for NLP systems because their meanings are often **non-comp
 - 💻 Benchmark & Models Repo: https://github.com/aymanshar/IdiomX  
 - 🎛 IdiomX Studio Demo (all 4 tasks): https://huggingface.co/spaces/aymansharara/idiomx-studio  
 - 📦 Kaggle Mirror: https://www.kaggle.com/datasets/aymansharara/idiomx  
-- 📄 Research Paper: docs/IdiomX_Dataset_Paper_v8.pdf
+- 📄 Research Paper: docs/IdiomX_Multilingual_Benchmark.pdf
 
 ---
 
