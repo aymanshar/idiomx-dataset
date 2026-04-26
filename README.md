@@ -10,7 +10,6 @@
 [![Dataset Size](https://img.shields.io/badge/Examples-196K+-informational)]()
 [![Languages](https://img.shields.io/badge/Languages-EN%20%7C%20AR%20%7C%20FR-blue)]()
 [![Tasks](https://img.shields.io/badge/Tasks-4_Benchmark_Tasks-purple)]()
-[![Status](https://img.shields.io/badge/Status-Active%100Research-orange)]()
 
 
 <p align="center">
