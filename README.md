@@ -2,13 +2,15 @@
 ---
 
 [![Hugging Face](https://img.shields.io/badge/HuggingFace-Dataset-yellow?logo=huggingface)](https://huggingface.co/datasets/aymansharara/IdiomX)
+[![Demo](https://img.shields.io/badge/HuggingFace-Space-orange?logo=huggingface)](https://huggingface.co/spaces/aymansharara/idiomx-studio)
+[![GitHub](https://img.shields.io/badge/GitHub-Benchmark_Repo-black?logo=github)](https://github.com/aymanshar/IdiomX)
 [![Kaggle](https://img.shields.io/badge/Kaggle-Dataset-blue?logo=kaggle)](https://www.kaggle.com/datasets/aymansharara/idiomx)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.19137833-blue)](https://doi.org/10.5281/zenodo.19137833)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Dataset Size](https://img.shields.io/badge/Examples-196K+-informational)]()
-[![Languages](https://img.shields.io/badge/Languages-EN%20%7C%20AR-blue)]()
-[![Tasks](https://img.shields.io/badge/Tasks-NLP%20%7C%20Translation%20%7C%20Classification-purple)]()
-[![Status](https://img.shields.io/badge/Status-Active%20Research-orange)]()
+[![Languages](https://img.shields.io/badge/Languages-EN%20%7C%20AR%20%7C%20FR-blue)]()
+[![Tasks](https://img.shields.io/badge/Tasks-4_Benchmark_Tasks-purple)]()
+[![Status](https://img.shields.io/badge/Status-Active%100Research-orange)]()
 
 
 <p align="center">
@@ -17,9 +19,11 @@
 
 *Three-stage reproducible pipeline for collecting, enriching, validating, and generating idioms.*
 
+Dataset: 196K+ Examples | 12K+ Idioms | 3 Languages | 4 Tasks
+
 ---
 
-**A Large-Scale Multilingual Dataset for Idiomatic Expression Understanding**
+**A Reproducible Multilingual Dataset and Construction Pipeline for Idiom Understanding**
 
 **Author:** Ayman Ali Sharara  
 
@@ -56,6 +60,16 @@ Idioms are difficult for NLP systems because their meanings are often **non-comp
 
 ---
 
+## Related Resources
+
+- 🤗 Dataset: https://huggingface.co/datasets/aymansharara/IdiomX  
+- 💻 Benchmark & Models Repo: https://github.com/aymanshar/IdiomX  
+- 🎛 IdiomX Studio Demo (all 4 tasks): https://huggingface.co/spaces/aymansharara/idiomx-studio  
+- 📦 Kaggle Mirror: https://www.kaggle.com/datasets/aymansharara/idiomx  
+- 📄 Research Paper: docs/IdiomX_Dataset_Paper_v8.pdf
+
+---
+
 ## At a Glance
 
 - 196K+ contextualized examples  
@@ -65,16 +79,6 @@ Idioms are difficult for NLP systems because their meanings are often **non-comp
 - 3-stage reproducible construction pipeline  
 - LLM enrichment + rule-based validation  
 - Dataset + models + demos publicly released
-
----
-
-## Related Resources
-
-- 🤗 Dataset: https://huggingface.co/datasets/aymansharara/IdiomX  
-- 💻 Benchmark & Models Repo: https://github.com/aymanshar/IdiomX  
-- 🎛 IdiomX Studio Demo (all 4 tasks): https://huggingface.co/spaces/aymansharara/idiomx-studio  
-- 📦 Kaggle Mirror: https://www.kaggle.com/datasets/aymansharara/idiomx  
-- 📄 Research Paper: docs/IdiomX_Dataset_Paper_v8.pdf
 
 ---
 
@@ -162,16 +166,16 @@ python -m scripts.collect_01_extract_idioms_from_kaikki
 
 ---
 
-```md
 ## Repository Structure
 
 ```text
-scripts/          # collection, enrichment, validation, and export scripts
+scripts/          # collection, enrichment, validation, export
 notebooks/        # end-to-end workflow notebooks
-data/             # raw, intermediate, and final dataset files
+data/             # raw, intermediate, final datasets
 docs/             # paper and documentation
-figures/          # pipeline diagrams and visual assets
-artifacts/        # generated outputs and analysis artifacts
+figures/          # diagrams and assets
+artifacts/        # outputs and evaluation artifacts
+```
 
 ---
 
