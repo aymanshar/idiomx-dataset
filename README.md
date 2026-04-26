@@ -1,5 +1,4 @@
 # IdiomX: Multilingual Idiom Understanding Dataset (EN–AR–FR)
-  
 ---
 
 [![Hugging Face](https://img.shields.io/badge/HuggingFace-Dataset-yellow?logo=huggingface)](https://huggingface.co/datasets/aymansharara/IdiomX)
@@ -56,6 +55,28 @@ Idioms are difficult for NLP systems because their meanings are often **non-comp
 
 ---
 
+## At a Glance
+
+- 196K+ contextualized examples  
+- 12K+ idioms  
+- 3 languages (EN–AR–FR)  
+- 4 benchmark tasks  
+- 3-stage reproducible construction pipeline  
+- LLM enrichment + rule-based validation  
+- Dataset + models + demos publicly released
+
+---
+
+## Related Resources
+
+- 🤗 Dataset: https://huggingface.co/datasets/aymansharara/IdiomX  
+- 💻 Benchmark & Models Repo: https://github.com/aymanshar/IdiomX  
+- 🎛 IdiomX Studio Demo (all 4 tasks): https://huggingface.co/spaces/aymansharara/idiomx-studio  
+- 📦 Kaggle Mirror: https://www.kaggle.com/datasets/aymansharara/idiomx  
+- 📄 Research Paper: docs/IdiomX_Dataset_Paper_v8.pdf
+
+---
+
 ## Why IdiomX Matters
 
 Idiomatic language remains one of the most challenging phenomena for NLP systems, even with modern large language models.
@@ -106,11 +127,7 @@ These pipelines are modular and reproducible, and together produce the final uni
 
 ### Pipeline 1 — Core Idioms
 
-- Extract idioms from Wiktionary (Kaikki) and WordNet  
-- Normalize and deduplicate  
-- Apply strict idiom filtering  
-- Generate contextual examples using LLMs  
-- Perform semantic validation  
+Extract → Normalize → Filter → Enrich → Validate
 
 #### Core collection steps
 
@@ -127,106 +144,7 @@ python -m scripts.collect_09_finalize_pre_enrichment_dataset
 python -m scripts.collect_10_dataset_statistics
 ```
 
-#### Description
-
-* Extract idioms from Wiktionary (Kaikki) and WordNet
-* Apply strict filtering
-* Normalize canonical forms
-* Merge sources
-* Produce high-quality pre-enrichment dataset
-
-
-#### Core enrichment steps
-
-```bash 
-python -m scripts.en_01_prepare_enrichment_batch_requests_v2
-python -m scripts.en_02_submit_batch_v2
-python -m scripts.en_03_check_existing_batch_v2
-python -m scripts.en_04_download_existing_batch_results
-python -m scripts.en_05_merge_batch_results_to_enriched_dataset_v2
-python -m scripts.en_06_validate_dataset_v2
-python -m scripts.en_07_verify_suspicious_rows_v2
-python -m scripts.en_08_final_dataset_statistics_v2
-```
-
----
-
-### Pipeline 2 — Modern Idioms & Slang
-
-- Sources: Urban Dictionary, Wiktionary slang, OpenSubtitles  
-- Clean noisy user-generated content  
-- Deduplicate at idiom level  
-- Align to IdiomX schema  
-- LLM enrichment and validation  
-
-#### Modern Data Collection steps
-
-```bash 
-python -m scripts.collect_modern_01_extract_urban_dictionary_slang
-python -m scripts.collect_modern_02_clean_urban_dictionary_source
-python -m scripts.collect_modern_03_extract_wiktionary_slang
-python -m scripts.collect_modern_04_clean_wiktionary_slang
-python -m scripts.collect_modern_05_merge_sources_stage1_urban_wiktionary
-python -m scripts.collect_modern_06_download_opensubtitles_source
-python -m scripts.collect_modern_07_extract_opensubtitles_slang_candidates
-python -m scripts.collect_modern_08_clean_opensubtitles_slang_candidates
-python -m scripts.collect_modern_09_merge_sources_stage2_add_opensubtitles
-python -m scripts.collect_modern_10_filter_global_modern_idioms
-python -m scripts.collect_modern_11_finalize_modern_pre_enrichment_dataset
-python -m scripts.collect_modern_12_compare_modern_with_main_idiomx
-python -m scripts.collect_modern_13_dedup_modern_by_idiom_only_pre_llm
-```
-
-#### Modern LLM Enrichment
-
-```bash 
-python -m scripts.en_modern_01_prepare_enrichment_batch_requests_v1
-python -m scripts.en_modern_02_submit_batch_v1
-python -m scripts.en_modern_03_check_existing_batch_v1
-python -m scripts.en_modern_04_download_existing_batch_results_v1
-python -m scripts.en_modern_05_parse_modern_batch_results_v1
-python -m scripts.en_modern_06_flatten_modern_enriched_results_v1
-python -m scripts.en_modern_07_filter_valid_modern_idioms_v1
-python -m scripts.en_modern_08_finalize_for_merge_v1
-python -m scripts.en_modern_09_align_to_idiomx_final_schema_v1
-python -m scripts.en_modern_09_validate_dataset_v1
-python -m scripts.en_modern_10_finalize_for_merge_v1
-python -m scripts.en_modern_11_align_schema_for_merge_v1
-```
----
-### Pipeline 3 — Synthetic Idiom Generation
-
-- Generate missing idioms using LLMs  
-- Deduplicate and filter weak candidates  
-- Maintain blacklist of invalid patterns  
-- Enrich and validate generated idioms  
-
-#### Synthetic generation steps
-```bash 
-python -m scripts.synthetic_01_prepare_missing_idiom_generation_requests_v1 --candidates-per-category 300
-python -m scripts.synthetic_02_submit_batch_v1
-python -m scripts.synthetic_03_check_batch_v1
-python -m scripts.synthetic_03b_list_batches_v1
-python -m scripts.synthetic_cancel_batch
-python -m scripts.synthetic_04_download_batch_results_v1
-python -m scripts.synthetic_05_parse_clean_deduplicate_v1
-python -m scripts.synthetic_06_merge_and_update_blacklist_v1
-python -m scripts.synthetic_07_prepare_for_enrichment_v1
-```
-
-#### Synthetic enrichment steps
-
-```bash 
-python -m scripts.en_synth_01_prepare_enrichment_batch_requests_v1
-python -m scripts.en_synth_02_submit_batch_v1
-python -m scripts.en_synth_03_check_existing_batch_v1
-python -m scripts.en_synth_04_download_existing_batch_results_v1
-python -m scripts.en_synth_05_parse_synth_batch_results_v1
-python -m scripts.en_synth_06_flatten_synth_enriched_results_v1
-python -m scripts.en_synth_07_filter_valid_synth_idioms_v1
-python -m scripts.en_synth_08_finalize_for_merge_v1
-python -m scripts.en_synth_09_validate_dataset_v1
-```
+See docs/pipeline_steps.md for complete workflow
 
 ---
 ## Pipeline Notebooks
@@ -262,6 +180,34 @@ conda activate idiomx
 pip install -r scripts/requirements.txt
 
 ```
+---
+
+## Quick Reproduction
+
+Clone and run:
+
+```bash
+git clone https://github.com/aymanshar/idiomx-dataset.git
+cd idiomx-dataset
+
+conda create -n idiomx python=3.11 -y
+conda activate idiomx
+pip install -r scripts/requirements.txt
+
+python -m scripts.collect_01_extract_idioms_from_kaikki
+```
+
+---
+```md
+## Repository Structure
+
+scripts/          # collection and enrichment pipeline  
+notebooks/        # end-to-end notebooks  
+data/final/       # final dataset exports  
+docs/             # paper and documentation  
+artifacts/        # evaluation artifacts
+```
+
 ---
 
 ## Final Dataset
@@ -410,14 +356,21 @@ If you use this dataset, please cite:
 
 Sharara, Ayman Ali (2026). 
  
-**IdiomX: A Large-Scale Bilingual Dataset for Idiomatic Expression Understanding**.  
+**IdiomX: A Multilingual Benchmark for Idiom Understanding, Retrieval, and Semantic Interpretation**.  
 Zenodo. https://doi.org/10.5281/zenodo.19137833
 
 ```bibtex
 @article{sharara2026idiomx,
-  title={IdiomX: A Large-Scale Bilingual Dataset for Idiomatic Expression Understanding},
+  title={IdiomX: A Reproducible Multilingual Dataset and Construction Pipeline for Idiom Understanding},
   author={Sharara, Ayman Ali},
   year={2026},
   note={Dataset and paper available on GitHub and HuggingFace}
 }
 ```
+---
+## If you use this work
+
+⭐ Star the repository  
+🤗 Try IdiomX Studio  
+📄 Cite the dataset and paper
+---
