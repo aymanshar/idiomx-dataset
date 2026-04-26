@@ -11,9 +11,15 @@
 [![Tasks](https://img.shields.io/badge/Tasks-NLP%20%7C%20Translation%20%7C%20Classification-purple)]()
 [![Status](https://img.shields.io/badge/Status-Active%20Research-orange)]()
 
+
+<p align="center">
+  <img src="figures/IdiomX_Data_perep_Pipeline_v2.png" width="100%">
+</p>
+
+*Three-stage reproducible pipeline for collecting, enriching, validating, and generating idioms.*
 ---
 
-**A Large-Scale Bilingual Dataset for Idiomatic Expression Understanding**
+**A Large-Scale Multilingual Dataset for Idiomatic Expression Understanding**
 
 **Author:** Ayman Ali Sharara  
 
