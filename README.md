@@ -16,6 +16,7 @@
 </p>
 
 *Three-stage reproducible pipeline for collecting, enriching, validating, and generating idioms.*
+
 ---
 
 **A Large-Scale Multilingual Dataset for Idiomatic Expression Understanding**
@@ -117,57 +118,19 @@ This makes it a strong benchmark for evaluating real language understanding beyo
 
 ## Data Construction Pipeline
 
-IdiomX is built through **three modular pipelines**:
+IdiomX is built through three reproducible pipelines:
 
-1. **Core Idiom Pipeline**
-2. **Modern Idioms & Slang Pipeline**
-3. **Synthetic Idiom Generation Pipeline**
+| Pipeline | Purpose | Main Output |
+|---|---|---|
+| Pipeline 1 — Core Idioms | Extract idioms from Kaikki/Wiktionary and WordNet | High-precision idiom inventory |
+| Pipeline 2 — Modern Idioms & Slang | Add modern and informal idioms from slang/conversational sources | Modern idiom extension |
+| Pipeline 3 — Synthetic Idiom Generation | Generate and validate missing idioms using LLMs | Expanded idiom coverage |
 
-These pipelines are modular and reproducible, and together produce the final unified dataset.
+All three pipelines are merged, deduplicated, enriched, validated, and exported into the final unified IdiomX dataset.
 
-### Pipeline 1 — Core Idioms
+For the complete step-by-step script workflow, see:
 
-Extract → Normalize → Filter → Enrich → Validate
-
-#### Core collection steps
-
-```bash
-python -m scripts.collect_01_extract_idioms_from_kaikki
-python -m scripts.collect_02_filter_strict_idioms
-python -m scripts.collect_03_clean_idioms
-python -m scripts.collect_04_build_high_precision_idioms
-python -m scripts.collect_05_normalize_kaikki_high_precision
-python -m scripts.collect_06_extract_wordnet_multiword_expressions
-python -m scripts.collect_07_merge_wordnet_with_kaikki
-python -m scripts.collect_08_filter_global_idioms
-python -m scripts.collect_09_finalize_pre_enrichment_dataset
-python -m scripts.collect_10_dataset_statistics
-```
-
-See docs/pipeline_steps.md for complete workflow
-
----
-## Pipeline Notebooks
-
-The dataset workflow is also documented in notebooks:
-
-1. `01_data_collection.ipynb`
-2. `02_data_enrichment_pipeline.ipynb`
-3. `03_finalize_idiomx_dataset.ipynb`
-4. `04_finalize_idiomx_modern_dataset_v1.ipynb`
-5. `05_merge_idiomX_and_modern_idiom.ipynb`
-6. `06_merge_idiomX_modern_and_synth.ipynb`
-
-These correspond to:
-
-| Step | Description |
-| --- | --- |
-| 01 | Data extraction and preprocessing |
-| 02 | LLM enrichment and semantic augmentation |
-| 03 | Final cleaning, validation, and dataset export |
-| 04 | finalize idiomx modern dataset v1 |
-| 05 | merge idiomX and modern |
-| 06 | final merge idiomX main, modern and synth |
+[`docs/pipeline_steps.md`](docs/pipeline_steps.md)
 
 ---
 
@@ -198,15 +161,41 @@ python -m scripts.collect_01_extract_idioms_from_kaikki
 ```
 
 ---
+
 ```md
 ## Repository Structure
 
-scripts/          # collection and enrichment pipeline  
-notebooks/        # end-to-end notebooks  
-data/final/       # final dataset exports  
-docs/             # paper and documentation  
-artifacts/        # evaluation artifacts
-```
+```text
+scripts/          # collection, enrichment, validation, and export scripts
+notebooks/        # end-to-end workflow notebooks
+data/             # raw, intermediate, and final dataset files
+docs/             # paper and documentation
+figures/          # pipeline diagrams and visual assets
+artifacts/        # generated outputs and analysis artifacts
+
+---
+
+## Pipeline Notebooks
+
+The dataset workflow is also documented in notebooks:
+
+1. `01_data_collection.ipynb`
+2. `02_data_enrichment_pipeline.ipynb`
+3. `03_finalize_idiomx_dataset.ipynb`
+4. `04_finalize_idiomx_modern_dataset_v1.ipynb`
+5. `05_merge_idiomX_and_modern_idiom.ipynb`
+6. `06_merge_idiomX_modern_and_synth.ipynb`
+
+These correspond to:
+
+| Step | Description |
+| --- | --- |
+| 01 | Data extraction and preprocessing |
+| 02 | LLM enrichment and semantic augmentation |
+| 03 | Final cleaning, validation, and dataset export |
+| 04 | finalize idiomx modern dataset v1 |
+| 05 | merge idiomX and modern |
+| 06 | final merge idiomX main, modern and synth |
 
 ---
 
@@ -346,7 +335,7 @@ Final outputs can be regenerated from raw sources using the provided scripts.
 
 The full dataset paper is available here:
 
- `docs/IdiomX_Dataset_Paper_v7.pdf`
+ `docs/IdiomX_Multilingual_Benchmark.pdf`
 
 ---
 
@@ -360,11 +349,11 @@ Sharara, Ayman Ali (2026).
 Zenodo. https://doi.org/10.5281/zenodo.19137833
 
 ```bibtex
-@article{sharara2026idiomx,
-  title={IdiomX: A Reproducible Multilingual Dataset and Construction Pipeline for Idiom Understanding},
+@misc{sharara2026idiomx,
+  title={IdiomX: A Multilingual Benchmark for Idiom Understanding, Retrieval, and Semantic Interpretation},
   author={Sharara, Ayman Ali},
   year={2026},
-  note={Dataset and paper available on GitHub and HuggingFace}
+  note={Dataset, construction pipeline, benchmark code, and demos available on GitHub and Hugging Face}
 }
 ```
 ---
