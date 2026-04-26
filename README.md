@@ -18,11 +18,11 @@
 
 *Three-stage reproducible pipeline for collecting, enriching, validating, and generating idioms.*
 
-Dataset: 196K+ Examples | 12K+ Idioms | 3 Languages | 4 Tasks
+Dataset: 196K+ Examples • 12K+ Idioms • 3 Languages • 4 Benchmark Tasks
 
 ---
 
-**A Reproducible Multilingual Dataset and Construction Pipeline for Idiom Understanding**
+**A Reproducible Multilingual Dataset and Pipeline for Idiom Understanding**
 
 **Author:** Ayman Ali Sharara  
 
@@ -38,6 +38,18 @@ Supervised by Prof. Hanna Abi Akl
 **Contact:**  
 - Academic: ayman.sharara@edu.dsti.institute  
 - Personal: aymanshar@gmail.com  
+
+---
+
+## At a Glance
+
+- 196K+ contextualized examples  
+- 12K+ idioms  
+- 3 languages (EN–AR–FR)  
+- 4 benchmark tasks  
+- 3-stage reproducible construction pipeline  
+- LLM enrichment + rule-based validation  
+- Dataset + models + demos publicly released
 
 ---
 
@@ -66,18 +78,6 @@ Idioms are difficult for NLP systems because their meanings are often **non-comp
 - 🎛 IdiomX Studio Demo (all 4 tasks): https://huggingface.co/spaces/aymansharara/idiomx-studio  
 - 📦 Kaggle Mirror: https://www.kaggle.com/datasets/aymansharara/idiomx  
 - 📄 Research Paper: docs/IdiomX_Multilingual_Benchmark.pdf
-
----
-
-## At a Glance
-
-- 196K+ contextualized examples  
-- 12K+ idioms  
-- 3 languages (EN–AR–FR)  
-- 4 benchmark tasks  
-- 3-stage reproducible construction pipeline  
-- LLM enrichment + rule-based validation  
-- Dataset + models + demos publicly released
 
 ---
 
@@ -116,7 +116,13 @@ This makes it a strong benchmark for evaluating real language understanding beyo
 - Synthetic expansion for missing idioms
 - Fully reproducible pipeline
 
+## Supported Benchmark Tasks
 
+<p align="center">
+  <img src="figures/IdiomX_Tasks_Pipeline_v2.png" width="95%">
+</p>
+
+IdiomX supports four benchmark tasks spanning detection, retrieval, cross-lingual alignment, and idiom interpretation.
 ---
 
 ## Data Construction Pipeline
@@ -148,23 +154,6 @@ pip install -r scripts/requirements.txt
 ```
 ---
 
-## Quick Reproduction
-
-Clone and run:
-
-```bash
-git clone https://github.com/aymanshar/idiomx-dataset.git
-cd idiomx-dataset
-
-conda create -n idiomx python=3.11 -y
-conda activate idiomx
-pip install -r scripts/requirements.txt
-
-python -m scripts.collect_01_extract_idioms_from_kaikki
-```
-
----
-
 ## Repository Structure
 
 ```text
@@ -177,7 +166,14 @@ artifacts/        # outputs and evaluation artifacts
 ```
 
 ---
+## Quick Start (3 Commands)
 
+```bash
+git clone https://github.com/aymanshar/idiomx-dataset.git
+pip install -r scripts/requirements.txt
+python -m scripts.collect_01_extract_idioms_from_kaikki
+```
+---
 ## Pipeline Notebooks
 
 The dataset workflow is also documented in notebooks:
@@ -325,23 +321,6 @@ All dataset construction steps are fully reproducible via:
 Final outputs can be regenerated from raw sources using the provided scripts.
 ---
 
-## Links
-
-- HuggingFace: https://huggingface.co/datasets/aymansharara/IdiomX
-- GitHub: https://github.com/aymanshar/idiomx-dataset
-- Kaggle: https://www.kaggle.com/datasets/aymansharara/idiomx
-- Zenodo: https://doi.org/10.5281/zenodo.19137833
-
----
-
-## Paper
-
-The full dataset paper is available here:
-
- `docs/IdiomX_Multilingual_Benchmark.pdf`
-
----
-
 ## Citation
 
 If you use this dataset, please cite:
@@ -359,11 +338,28 @@ Zenodo. https://doi.org/10.5281/zenodo.19137833
   note={Dataset, construction pipeline, benchmark code, and demos available on GitHub and Hugging Face}
 }
 ```
+
 ---
-### If you use this work
-```md
+
+## Associated Research Paper
+
+The full dataset paper is available here:
+
+ `docs/IdiomX_Multilingual_Benchmark.pdf`
+
+---
+
+## Links
+
+- HuggingFace: https://huggingface.co/datasets/aymansharara/IdiomX
+- GitHub: https://github.com/aymanshar/idiomx-dataset
+- Kaggle: https://www.kaggle.com/datasets/aymansharara/idiomx
+- Zenodo: https://doi.org/10.5281/zenodo.19137833
+
+---
+
+#### If you use this work
 ⭐ Star the repository  
 🤗 Try IdiomX Studio  
 📄 Cite the dataset and paper
-```
 ---
