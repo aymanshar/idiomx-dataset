@@ -360,9 +360,10 @@ Zenodo. https://doi.org/10.5281/zenodo.19137833
 }
 ```
 ---
-## If you use this work
-
+### If you use this work
+```md
 ⭐ Star the repository  
 🤗 Try IdiomX Studio  
 📄 Cite the dataset and paper
+```
 ---
