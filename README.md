@@ -18,7 +18,7 @@
 
 *Three-stage reproducible pipeline for collecting, enriching, validating, and generating idioms.*
 
-Dataset: 196K+ Examples • 12K+ Idioms • 3 Languages • 4 Benchmark Tasks
+Dataset: 190K+ Examples • 12K+ Idioms • 3 Languages • 4 Benchmark Tasks
 
 ---
 
@@ -43,7 +43,7 @@ Supervised by Prof. Hanna Abi Akl
 
 ## At a Glance
 
-- 196K+ contextualized examples  
+- 190K+ contextualized examples  
 - 12K+ idioms  
 - 3 languages (EN–AR–FR)  
 - 4 benchmark tasks  
@@ -96,7 +96,7 @@ This makes it a strong benchmark for evaluating real language understanding beyo
 
 ## Dataset Scale
 
-- ~196K contextualized examples
+- ~190K contextualized examples
 - ~12K+ unique idioms
 - ~172K unique sentences
 - ~14 examples per idiom
