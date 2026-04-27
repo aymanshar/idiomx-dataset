@@ -7,7 +7,7 @@
 [![Kaggle](https://img.shields.io/badge/Kaggle-Dataset-blue?logo=kaggle)](https://www.kaggle.com/datasets/aymansharara/idiomx)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.19137833-blue)](https://doi.org/10.5281/zenodo.19137833)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Dataset Size](https://img.shields.io/badge/Examples-196K+-informational)]()
+[![Dataset Size](https://img.shields.io/badge/Examples-190K+-informational)]()
 [![Languages](https://img.shields.io/badge/Languages-EN%20%7C%20AR%20%7C%20FR-blue)]()
 [![Tasks](https://img.shields.io/badge/Tasks-4_Benchmark_Tasks-purple)]()
 
